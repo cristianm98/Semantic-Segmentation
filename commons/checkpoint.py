@@ -9,10 +9,13 @@ args = get_arguments()
 device = torch.device(args.device)
 
 
-def save_checkpoint(model, optimizer, epoch, miou, args):
-    name = args.name
-    save_dir = args.save_dir
-    model_path = os.path.join(save_dir, name)
+def save_checkpoint(model, optimizer, epoch, miou, save_best_result: bool):
+    if save_best_result:
+        args_file = os.path.join(args.save_dir, 'best_' + args.name + '_' + args.dataset + '_args.txt')
+        model_path = os.path.join(args.save_dir, 'best_' + args.name + '_' + args.dataset)
+    else:
+        args_file = os.path.join(args.save_dir, 'last_' + args.name + '_' + args.dataset + '_args.txt')
+        model_path = os.path.join(args.save_dir, 'last_' + args.name + '_' + args.dataset)
     checkpoint = {
         'epoch': epoch,
         'miou': miou,
@@ -20,7 +23,6 @@ def save_checkpoint(model, optimizer, epoch, miou, args):
         'optimizer': optimizer.state_dict()
     }
     torch.save(checkpoint, model_path)
-    args_file = os.path.join(save_dir, name + '_args.txt')
     with open(args_file, 'w') as args_file:
         sorted_args = sorted(vars(args))
         for arg in sorted_args:
@@ -30,10 +32,13 @@ def save_checkpoint(model, optimizer, epoch, miou, args):
         args_file.write("Mean IoU: {0}\n".format(miou))
 
 
-def load_checkpoint(model: nn.Module, optimizer: optim.Optimizer, load_dir, name):
+def load_checkpoint(model: nn.Module, optimizer: optim.Optimizer, load_dir, load_best_result: bool):
     assert os.path.isdir(load_dir), \
         '\"{0}\" directory does not exist'.format(load_dir)
-    model_path = os.path.join(load_dir, name)
+    if load_best_result:
+        model_path = os.path.join(args.save_dir, 'best_' + args.name + '_' + args.dataset)
+    else:
+        model_path = os.path.join(args.save_dir, 'last_' + args.name + '_' + args.dataset)
     assert os.path.isfile(model_path), \
         '\"{0}\" file does not exist'.format(model_path)
     checkpoint = torch.load(model_path, map_location=device)

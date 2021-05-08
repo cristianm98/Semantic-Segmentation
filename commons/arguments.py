@@ -52,8 +52,13 @@ def get_arguments():
         default=2,
         help='Number of workers. Default: 2')
     parser.add_argument(
+        '--weight-decay',
+        default=0.01,
+        help='Weigh decay. Default: 0.01'
+    )
+    parser.add_argument(
         '--dataset',
-        choices=['camvid'],
+        choices=['camvid', 'kitti'],
         default='camvid',
         help='Dataset to use. Default: camvid')
     parser.add_argument(
@@ -100,6 +105,13 @@ def get_arguments():
         const=True,
         default=False,
         help='True if should resume training a saved model. Default: False'
+    )
+    parser.add_argument(
+        '--data-aug',
+        nargs='?',
+        const=True,
+        default=False,
+        help='True if should use data augmentation for training. Default: False'
     )
 
     return parser.parse_args()

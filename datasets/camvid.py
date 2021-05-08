@@ -19,40 +19,39 @@ class CamVid(data.Dataset):
     # File containing color encoding for each class
     class_labels_file = 'class_dict.csv'
 
-    # TODO create class encoding from class_dict.csv
     class_encoding = OrderedDict([
-        ('Animal', (64, 128, 64)),
-        ('Archway', (192, 0, 128)),
-        ('Bicyclist', (0, 128, 92)),
-        ('Bridge', (0, 128, 64)),
-        ('Building', (128, 0, 0)),
-        ('Car', (64, 0, 128)),
-        ('CartLuggagePram', (64, 0, 192)),
-        ('Child', (192, 128, 64)),
-        ('Column_Pole', (192, 192, 128)),
-        ('Fence', (64, 64, 128)),
-        ('LaneMkgsDriv', (128, 0, 192)),
-        ('LaneMkgsNonDriv', (192, 0, 64)),
-        ('Misc_Text', (128, 128, 64)),
-        ('MotorcycleScooter', (192, 0, 192)),
-        ('OtherMoving', (128, 64, 64)),
-        ('ParkingBlock', (64, 192, 128)),
+        # ('Animal', (64, 128, 64)),
+        # ('Archway', (192, 0, 128)),
+        # ('Bicyclist', (0, 128, 92)),
+        # ('Bridge', (0, 128, 64)),
+        # ('Building', (128, 0, 0)),
+        # ('Car', (64, 0, 128)),
+        # ('CartLuggagePram', (64, 0, 192)),
+        # ('Child', (192, 128, 64)),
+        # ('Column_Pole', (192, 192, 128)),
+        # ('Fence', (64, 64, 128)),
+        # ('LaneMkgsDriv', (128, 0, 192)),
+        # ('LaneMkgsNonDriv', (192, 0, 64)),
+        # ('Misc_Text', (128, 128, 64)),
+        # ('MotorcycleScooter', (192, 0, 192)),
+        # ('OtherMoving', (128, 64, 64)),
+        # ('ParkingBlock', (64, 192, 128)),
         ('Pedestrian', (64, 64, 0)),
         ('Road', (128, 64, 128)),
         ('RoadShoulder', (128, 128, 192)),
         ('Sidewalk', (0, 0, 192)),
-        ('SignSymbol', (192, 128, 128)),
-        ('Sky', (128, 128, 128)),
-        ('SUVPickupTruck', (64, 128, 192)),
-        ('TrafficCone', (0, 0, 64)),
-        ('TrafficLight', (0, 64, 64)),
-        ('Train', (192, 64, 128)),
-        ('Tree', (128, 128, 0)),
-        ('Truck_Bus', (192, 128, 192)),
-        ('Tunnel', (64, 0, 64)),
-        ('VegetationMisc', (192, 192, 0)),
-        ('Void', (0, 0, 0)),
-        ('Wall', (64, 192, 0))
+        # ('SignSymbol', (192, 128, 128)),
+        # ('Sky', (128, 128, 128)),
+        # ('SUVPickupTruck', (64, 128, 192)),
+        # ('TrafficCone', (0, 0, 64)),
+        # ('TrafficLight', (0, 64, 64)),
+        # ('Train', (192, 64, 128)),
+        # ('Tree', (128, 128, 0)),
+        # ('Truck_Bus', (192, 128, 192)),
+        # ('Tunnel', (64, 0, 64)),
+        # ('VegetationMisc', (192, 192, 0)),
+        # ('Void', (0, 0, 0)),
+        # ('Wall', (64, 192, 0))
     ])
 
     def __init__(self, root_dir, mode='train', data_transform=None, label_transform=None) -> None:
@@ -89,12 +88,8 @@ class CamVid(data.Dataset):
             data_path, label_path = self.test_data[index], self.test_labels[index]
         else:
             raise RuntimeError("Unexpected dataset mode. Supported modes are: train, val and test.")
-        img = Image.open(data_path)
-        label = Image.open(label_path)
-        if self.data_transform is not None:
-            img = self.data_transform(img)
-        if self.label_transform is not None:
-            label = self.label_transform(label)
+        img = utils.get_data_transformed(data_path, self.data_transform)
+        label = utils.get_data_transformed(label_path, self.label_transform)
         label = utils.get_target_mask(label, self.class_encoding)
         return img, label
 

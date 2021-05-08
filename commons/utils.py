@@ -29,7 +29,7 @@ def train(model, optimizer, criterion, metric, train_loader, val_loader, class_e
     val = Tester(model=model, data_loader=val_loader, criterion=criterion, metric=metric, device=device)
     if args.resume_training:
         model, optimizer, start_epoch, best_miou = load_checkpoint(
-            model, optimizer, args.save_dir, args.name)
+            model, optimizer, args.save_dir, load_best_result=False)
         print("Resuming from model: Start epoch = {0} "
               "| Best mean IoU = {1:.4f}".format(start_epoch, best_miou))
     else:
@@ -56,17 +56,21 @@ def train(model, optimizer, criterion, metric, train_loader, val_loader, class_e
                 best_result['miou'] = miou
                 best_result['epoch'] = epoch
                 best_result['iou'] = iou
-                save_checkpoint(model, optimizer, epoch, miou, args)
+                save_checkpoint(model, optimizer, epoch, miou, save_best_result=True)
+            save_checkpoint(model, optimizer, epoch, miou, save_best_result=False)
     return model
 
 
 def test(model, criterion, metric, test_loader, class_encoding):
     print("\nTesting...\n")
     tester = Tester(model=model, data_loader=test_loader, criterion=criterion, metric=metric, device=device)
-    loss, (iou, miou) = tester.run_epoch()
-    print(dict_ious(iou))
-    print("[Test] Avg loss: {0:.4f} | MIoU: {1:.4f}".format(loss, miou))
-    data, targets = iter(test_loader).__next__()
+    if args.dataset != 'kitti':
+        loss, (iou, miou) = tester.run_epoch()
+        print(dict_ious(class_encoding, iou))
+        print("[Test] Avg loss: {0:.4f} | MIoU: {1:.4f}".format(loss, miou))
+    data = iter(test_loader).__next__()
+    if device.type == 'cuda':
+        model.cuda()
     predict(model, data, class_encoding)
 
 
@@ -118,7 +122,7 @@ def save_results(images, predictions):
 def get_parameters(num_classes):
     model = model_utils.get_model(num_classes, pretrained=True)
     criterion = nn.CrossEntropyLoss()
-    optimizer = optim.Adam(model.parameters(), lr=args.learning_rate)
+    optimizer = optim.Adam(model.parameters(), lr=args.learning_rate, weight_decay=args.weight_decay)
     metric = IoU(num_classes=num_classes, ignore_index=None)
     return model, criterion, optimizer, metric
 
