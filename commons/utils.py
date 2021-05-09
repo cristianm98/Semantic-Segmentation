@@ -64,7 +64,7 @@ def test(model, criterion, metric, test_loader, class_encoding):
     print("\nTesting...\n")
     tester = Tester(model=model, data_loader=test_loader, criterion=criterion, metric=metric, device=device)
     loss, (iou, miou) = tester.run_epoch()
-    print(dict_ious(iou))
+    print(dict_ious(class_encoding, iou))
     print("[Test] Avg loss: {0:.4f} | MIoU: {1:.4f}".format(loss, miou))
     data, targets = iter(test_loader).__next__()
     predict(model, data, class_encoding)
