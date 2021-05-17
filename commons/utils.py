@@ -30,6 +30,7 @@ def train(model, optimizer, criterion, metric, train_loader, val_loader, class_e
     if args.resume_training:
         model, optimizer, start_epoch, best_miou = load_checkpoint(
             model, optimizer, args.save_dir, load_best_result=False)
+        start_epoch += 1
         print("Resuming from model: Start epoch = {0} "
               "| Best mean IoU = {1:.4f}".format(start_epoch, best_miou))
     else:
