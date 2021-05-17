@@ -1,4 +1,6 @@
+import numpy as np
 import torch
+from torch.backends import cudnn
 
 import commons.utils as commons_utils
 import datasets.utils as dataset_utils
@@ -8,6 +10,12 @@ from commons.checkpoint import load_checkpoint
 args = get_arguments()
 
 if __name__ == '__main__':
+    np.random.seed(123)
+    torch.manual_seed(123)
+    device = torch.device(args.device)
+    if device.type == 'cuda':
+        torch.cuda.manual_seed(123)
+    cudnn.benchmark = True
     print(torch.__version__)
     if args.dataset.lower() == 'camvid':
         from datasets.camvid import CamVid as dataset
