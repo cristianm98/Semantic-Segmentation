@@ -22,8 +22,8 @@ if __name__ == '__main__':
     num_classes = len(class_encoding)
     model, criterion, optimizer, metric = commons_utils.get_parameters(num_classes)
     if args.load_model:
-        model = load_checkpoint(model, optimizer, args.save_dir)
+        model, optimizer, epoch, miou = load_checkpoint(model, optimizer, args.save_dir, load_best_result=False)
     else:
         model = commons_utils.train(model, optimizer, criterion, metric, train_loader, val_loader, class_encoding)
-    model = load_checkpoint(model, optimizer, args.save_dir, load_best_result=True)
+    model, optimizer, _, _ = load_checkpoint(model, optimizer, args.save_dir, load_best_result=True)
     commons_utils.test(model, criterion, metric, test_loader, class_encoding)
