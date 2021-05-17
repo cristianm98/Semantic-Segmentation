@@ -69,7 +69,9 @@ def test(model, criterion, metric, test_loader, class_encoding):
         loss, (iou, miou) = tester.run_epoch()
         print(dict_ious(class_encoding, iou))
         print("[Test] Avg loss: {0:.4f} | MIoU: {1:.4f}".format(loss, miou))
-    data, _ = iter(test_loader).__next__()
+        data, _ = iter(test_loader).__next__()
+    else:
+        data = iter(test_loader).__next__()
     if device.type == 'cuda':
         model.cuda()
     predict(model, data, class_encoding)
