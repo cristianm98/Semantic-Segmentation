@@ -85,9 +85,9 @@ def predict(model, images, class_encoding):
         ext_transforms.LongTensorToRGBPIL(class_encoding),
         transforms.ToTensor()
     ])
-    # predictions = batch_transform(predictions.cpu(), label_to_rgb)
+    predictions = batch_transform(predictions.cpu(), label_to_rgb)
     imshow_batch(images.detach().cpu(), predictions.detach().cpu(), pred_transform)
-    # save_results(images.detach().cpu(), predictions.detach().cpu())
+    save_results(images.detach().cpu(), predictions.detach().cpu())
 
 
 def batch_transform(batch, transform):
