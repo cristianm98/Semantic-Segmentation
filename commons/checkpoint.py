@@ -9,7 +9,7 @@ args = get_arguments()
 device = torch.device(args.device)
 
 
-def save_checkpoint(model, optimizer, epoch, miou, save_best_result: bool):
+def save_checkpoint(model, optimizer, epoch, miou, ious, save_best_result: bool):
     if save_best_result:
         args_file = os.path.join(args.save_dir, 'best_' + args.name + '_' + args.dataset + '_args.txt')
         model_path = os.path.join(args.save_dir, 'best_' + args.name + '_' + args.dataset)
@@ -17,10 +17,11 @@ def save_checkpoint(model, optimizer, epoch, miou, save_best_result: bool):
         args_file = os.path.join(args.save_dir, 'last_' + args.name + '_' + args.dataset + '_args.txt')
         model_path = os.path.join(args.save_dir, 'last_' + args.name + '_' + args.dataset)
     checkpoint = {
+        'model': model.state_dict(),
+        'optimizer': optimizer.state_dict(),
         'epoch': epoch,
         'miou': miou,
-        'model': model.state_dict(),
-        'optimizer': optimizer.state_dict()
+        'ious': ious,
     }
     torch.save(checkpoint, model_path)
     with open(args_file, 'w') as args_file:
@@ -48,4 +49,5 @@ def load_checkpoint(model: nn.Module, optimizer: optim.Optimizer, load_dir, load
     optimizer.load_state_dict(checkpoint['optimizer'])
     epoch = checkpoint['epoch']
     miou = checkpoint['miou']
-    return model.to(device), optimizer, epoch, miou
+    ious = checkpoint['ious']
+    return model.to(device), optimizer, epoch, miou, ious

@@ -28,7 +28,7 @@ def train(model, optimizer, criterion, metric, train_loader, val_loader, class_e
                       device=device)
     val = Tester(model=model, data_loader=val_loader, criterion=criterion, metric=metric, device=device)
     if args.resume_training:
-        model, optimizer, start_epoch, best_miou = load_checkpoint(
+        model, optimizer, start_epoch, best_miou, _ = load_checkpoint(
             model, optimizer, args.save_dir, load_best_result=False)
         start_epoch += 1
         print("Resuming from model: Start epoch = {0} "
@@ -37,28 +37,28 @@ def train(model, optimizer, criterion, metric, train_loader, val_loader, class_e
         start_epoch = 0
         best_miou = 0
     best_result = {
-        'iou': [],
+        'ious': [],
         'miou': best_miou,
         'epoch': start_epoch
     }
     for epoch in tqdm(range(start_epoch, args.epochs)):
         print("[Epoch: {0:d} | Training] Start epoch...".format(epoch))
-        loss, (iou, miou) = trainer.run_epoch()
+        loss, (ious, miou) = trainer.run_epoch()
         print("[Epoch: {0:d} | Training] Finish epoch...\n"
               "Results: Avg Loss:{1:.4f} | MIoU: {2:.4f}".format(epoch, loss, miou))
-        print(dict_ious(class_encoding, iou))
+        print(dict_ious(class_encoding, ious))
         if (epoch + 1) % 10 == 0 or epoch + 1 == args.epochs:
             print("[Epoch: {0:d} | Validation] Start epoch...".format(epoch))
-            loss, (iou, miou) = val.run_epoch()
-            print(dict_ious(class_encoding, iou))
+            loss, (ious, miou) = val.run_epoch()
+            print(dict_ious(class_encoding, ious))
             print("[Epoch: {0:d} | Validation] Finish epoch...\n"
                   "Results: Avg loss: {1:.4f} | MIoU: {2:.4f}".format(epoch, loss, miou))
             if miou > best_result['miou']:
                 best_result['miou'] = miou
                 best_result['epoch'] = epoch
-                best_result['iou'] = iou
-                save_checkpoint(model, optimizer, epoch, miou, save_best_result=True)
-            save_checkpoint(model, optimizer, epoch, miou, save_best_result=False)
+                best_result['ious'] = ious
+                save_checkpoint(model, optimizer, epoch, miou, ious, save_best_result=True)
+            save_checkpoint(model, optimizer, epoch, miou, ious, save_best_result=False)
     return model
 
 
