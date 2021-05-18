@@ -23,7 +23,7 @@ class Unet(nn.Module):
     def __init__(self, in_channels=3, num_classes=1, features=None):
         super(Unet, self).__init__()
         if features is None:
-            features = [64, 128, 256, 512]
+            features = [64, 128, 256, 512, 1024]
         self.pool = nn.MaxPool2d(kernel_size=2, stride=2)
         self.encoder = self.down(in_channels, features)
         self.decoder = self.up(features)
@@ -53,8 +53,7 @@ class Unet(nn.Module):
             skip_connections.append(x)
             x = self.pool(x)
 
-        x = self.bottleneck(x)
-        x = self.dropout(x)
+        x = self.bottleneck.forward(x)
         skip_connections = list(reversed(skip_connections))
         for index in range(0, len(self.decoder), 2):
             x = self.decoder[index](x)
