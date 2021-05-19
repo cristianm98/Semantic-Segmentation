@@ -29,7 +29,6 @@ class Unet(nn.Module):
         self.decoder = self.up(features)
         self.bottleneck = DoubleConv(features[-1], features[-1] * 2)
         self.conv1x1 = nn.Conv2d(features[0], num_classes, kernel_size=1)
-        self.dropout = nn.Dropout()
 
     def down(self, in_channels, features):
         encoder = nn.ModuleList()
