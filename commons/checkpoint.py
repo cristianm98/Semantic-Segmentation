@@ -9,13 +9,8 @@ args = get_arguments()
 device = torch.device(args.device)
 
 
-def save_checkpoint(model, optimizer, epoch, miou, ious, save_best_result: bool):
-    if save_best_result:
-        args_file = os.path.join(args.save_dir, 'best_' + args.name + '_' + args.dataset + '_args.txt')
-        model_path = os.path.join(args.save_dir, 'best_' + args.name + '_' + args.dataset)
-    else:
-        args_file = os.path.join(args.save_dir, 'last_' + args.name + '_' + args.dataset + '_args.txt')
-        model_path = os.path.join(args.save_dir, 'last_' + args.name + '_' + args.dataset)
+def save_checkpoint(model, optimizer, epoch, miou, ious, mode):
+    args_path, model_path = get_checkpoint_paths(mode)
     checkpoint = {
         'model': model.state_dict(),
         'optimizer': optimizer.state_dict(),
@@ -24,7 +19,7 @@ def save_checkpoint(model, optimizer, epoch, miou, ious, save_best_result: bool)
         'ious': ious,
     }
     torch.save(checkpoint, model_path)
-    with open(args_file, 'w') as args_file:
+    with open(args_path, 'w') as args_file:
         sorted_args = sorted(vars(args))
         for arg in sorted_args:
             entry = "{0}: {1}\n".format(arg, getattr(args, arg))
@@ -33,13 +28,10 @@ def save_checkpoint(model, optimizer, epoch, miou, ious, save_best_result: bool)
         args_file.write("Mean IoU: {0}\n".format(miou))
 
 
-def load_checkpoint(model: nn.Module, optimizer: optim.Optimizer, load_dir, load_best_result: bool):
+def load_checkpoint(model: nn.Module, optimizer: optim.Optimizer, load_dir, mode):
+    _, model_path = get_checkpoint_paths(mode)
     assert os.path.isdir(load_dir), \
         '\"{0}\" directory does not exist'.format(load_dir)
-    if load_best_result:
-        model_path = os.path.join(args.save_dir, 'best_' + args.name + '_' + args.dataset)
-    else:
-        model_path = os.path.join(args.save_dir, 'last_' + args.name + '_' + args.dataset)
     assert os.path.isfile(model_path), \
         '\"{0}\" file does not exist'.format(model_path)
     checkpoint = torch.load(model_path, map_location=device)
@@ -51,3 +43,12 @@ def load_checkpoint(model: nn.Module, optimizer: optim.Optimizer, load_dir, load
     miou = checkpoint['miou']
     ious = checkpoint['ious']
     return model.to(device), optimizer, epoch, miou, ious
+
+
+def get_checkpoint_paths(mode):
+    if mode == 'train_best' or mode == 'val_best' or mode == 'last':
+        args_path = os.path.join(args.save_dir, mode + '_' + args.name + '_' + args.dataset + '_args.txt')
+        model_path = os.path.join(args.save_dir, mode + '_' + args.name + '_' + args.dataset)
+    else:
+        raise RuntimeError("Unexpected checkpoint mode. Supported modes are: val_best, train_best and last.")
+    return model_path, args_path

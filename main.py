@@ -30,8 +30,12 @@ if __name__ == '__main__':
     num_classes = len(class_encoding)
     model, criterion, optimizer, metric = commons_utils.get_parameters(num_classes)
     if args.load_model:
-        model, optimizer, epoch, miou, ious = load_checkpoint(model, optimizer, args.save_dir, load_best_result=False)
+        model, optimizer, epoch, miou, ious = load_checkpoint(model, optimizer, args.save_dir, 'val_best')
     else:
         model = commons_utils.train(model, optimizer, criterion, metric, train_loader, val_loader, class_encoding)
-    model, optimizer, _, _, _ = load_checkpoint(model, optimizer, args.save_dir, load_best_result=True)
+    print("[Test] Testing on best val model...")
+    model, optimizer, _, _, _ = load_checkpoint(model, optimizer, args.save_dir, 'val_best')
+    commons_utils.test(model, criterion, metric, test_loader, class_encoding)
+    print("[Test] Testing on best train model...")
+    model, optimizer, _, _, _ = load_checkpoint(model, optimizer, args.save_dir, 'train_best')
     commons_utils.test(model, criterion, metric, test_loader, class_encoding)

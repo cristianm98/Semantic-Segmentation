@@ -29,18 +29,24 @@ def train(model, optimizer, criterion, metric, train_loader, val_loader, class_e
     val = Tester(model=model, data_loader=val_loader, criterion=criterion, metric=metric, device=device)
     if args.resume_training:
         model, optimizer, start_epoch, best_miou, _ = load_checkpoint(
-            model, optimizer, args.save_dir, load_best_result=False)
+            model, optimizer, args.save_dir, 'last')
         start_epoch += 1
         print("Resuming from model: Start epoch = {0} "
               "| Best mean IoU = {1:.4f}".format(start_epoch, best_miou))
     else:
         start_epoch = 0
         best_miou = 0
-    best_result = {
+    best_val_result = {
         'ious': [],
         'miou': best_miou,
         'epoch': start_epoch
     }
+    best_train_result = {
+        'ious': [],
+        'miou': best_miou,
+        'epoch': start_epoch
+    }
+
     for epoch in tqdm(range(start_epoch, args.epochs)):
         print("[Epoch: {0:d} | Training] Start epoch...".format(epoch))
         loss, (ious, miou) = trainer.run_epoch()
@@ -53,12 +59,17 @@ def train(model, optimizer, criterion, metric, train_loader, val_loader, class_e
             print(dict_ious(class_encoding, ious))
             print("[Epoch: {0:d} | Validation] Finish epoch...\n"
                   "Results: Avg loss: {1:.4f} | MIoU: {2:.4f}".format(epoch, loss, miou))
-            if miou > best_result['miou']:
-                best_result['miou'] = miou
-                best_result['epoch'] = epoch
-                best_result['ious'] = ious
-                save_checkpoint(model, optimizer, epoch, miou, ious, save_best_result=True)
-            save_checkpoint(model, optimizer, epoch, miou, ious, save_best_result=False)
+            if miou > best_val_result['miou']:
+                best_val_result['miou'] = miou
+                best_val_result['epoch'] = epoch
+                best_val_result['ious'] = ious
+                save_checkpoint(model, optimizer, epoch, miou, ious, 'val_best')
+        if miou > best_train_result['miou']:
+            best_val_result['miou'] = miou
+            best_val_result['epoch'] = epoch
+            best_val_result['ious'] = ious
+            save_checkpoint(model, optimizer, epoch, miou, ious, 'train_best')
+        save_checkpoint(model, optimizer, epoch, miou, ious, 'last')
     return model
 
 
