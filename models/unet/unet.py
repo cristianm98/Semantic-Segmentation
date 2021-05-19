@@ -53,7 +53,7 @@ class Unet(nn.Module):
             skip_connections.append(x)
             x = self.pool(x)
 
-        x = self.bottleneck.forward(x)
+        x = self.bottleneck(x)
         skip_connections = list(reversed(skip_connections))
         for index in range(0, len(self.decoder), 2):
             x = self.decoder[index](x)
