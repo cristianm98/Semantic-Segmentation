@@ -30,8 +30,8 @@ class CamVid(data.Dataset):
         # ('Child', (192, 128, 64)),
         # ('Column_Pole', (192, 192, 128)),
         # ('Fence', (64, 64, 128)),
-        # ('LaneMkgsDriv', (128, 0, 192)),
-        # ('LaneMkgsNonDriv', (192, 0, 64)),
+        ('LaneMkgsDriv', (128, 0, 192)),
+        ('LaneMkgsNonDriv', (192, 0, 64)),
         # ('Misc_Text', (128, 128, 64)),
         # ('MotorcycleScooter', (192, 0, 192)),
         # ('OtherMoving', (128, 64, 64)),
@@ -50,7 +50,7 @@ class CamVid(data.Dataset):
         # ('Truck_Bus', (192, 128, 192)),
         # ('Tunnel', (64, 0, 64)),
         # ('VegetationMisc', (192, 192, 0)),
-        # ('Void', (0, 0, 0)),
+        ('Void', (0, 0, 0)),
         # ('Wall', (64, 192, 0))
     ])
 
