@@ -28,11 +28,17 @@ def train(model, optimizer, criterion, metric, train_loader, val_loader, class_e
                       device=device)
     val = Tester(model=model, data_loader=val_loader, criterion=criterion, metric=metric, device=device)
     if args.resume_training:
-        model, optimizer, start_epoch, best_miou, _ = load_checkpoint(
-            model, optimizer, args.save_dir, 'last')
-        start_epoch += 1
-        print("Resuming from model: Start epoch = {0} "
-              "| Best mean IoU = {1:.4f}".format(start_epoch, best_miou))
+        try:
+            model, optimizer, start_epoch, best_miou, _ = load_checkpoint(
+                model, optimizer, args.save_dir, 'last')
+            start_epoch += 1
+            print("Resuming from model: Start epoch = {0} "
+                  "| Best mean IoU = {1:.4f}".format(start_epoch, best_miou))
+        except FileNotFoundError:
+            best_miou = 0
+            start_epoch = 0
+            print("Checkpoint file not found. Starting from model: Start epoch = {0} "
+                  "| Best mean IoU = {1:.4f}".format(start_epoch, best_miou))
     else:
         start_epoch = 0
         best_miou = 0
@@ -98,8 +104,10 @@ def predict(model, images, class_encoding):
         ext_transforms.LongTensorToRGBPIL(class_encoding),
         transforms.ToTensor()
     ])
-#     predictions = batch_transform(predictions.cpu(), label_to_rgb)
+    #     predictions = batch_transform(predictions.cpu(), label_to_rgb)
     imshow_batch(images.detach().cpu(), predictions.detach().cpu(), pred_transform)
+
+
 #     save_results(images.detach().cpu(), predictions.detach().cpu())
 
 
