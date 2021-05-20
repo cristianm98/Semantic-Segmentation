@@ -51,4 +51,4 @@ def get_checkpoint_paths(mode):
         model_path = os.path.join(args.save_dir, mode + '_' + args.name + '_' + args.dataset)
     else:
         raise RuntimeError("Unexpected checkpoint mode. Supported modes are: val_best, train_best and last.")
-    return model_path, args_path
+    return args_path, model_path
