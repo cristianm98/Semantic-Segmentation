@@ -34,7 +34,7 @@ def train(model, optimizer, criterion, metric, train_loader, val_loader, class_e
             start_epoch += 1
             print("Resuming from model: Start epoch = {0} "
                   "| Best mean IoU = {1:.4f}".format(start_epoch, best_miou))
-        except FileNotFoundError:
+        except AssertionError:
             best_miou = 0
             start_epoch = 0
             print("Checkpoint file not found. Starting from model: Start epoch = {0} "
