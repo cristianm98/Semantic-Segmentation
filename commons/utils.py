@@ -15,7 +15,7 @@ from commons.arguments import get_arguments
 from commons.tester import Tester
 from commons.trainer import Trainer
 from metrics.iou import IoU
-from commons.checkpoint import save_checkpoint, load_checkpoint
+from commons.checkpoint import save_checkpoint, load_checkpoint, VAL_MODE, TRAIN_MODE, LAST_MODE
 
 args = get_arguments()
 device = torch.device(args.device)
@@ -29,29 +29,26 @@ def train(model, optimizer, criterion, metric, train_loader, val_loader, class_e
     val = Tester(model=model, data_loader=val_loader, criterion=criterion, metric=metric, device=device)
     if args.resume_training:
         try:
-            model, optimizer, start_epoch, best_miou, _ = load_checkpoint(
-                model, optimizer, args.save_dir, 'last')
+            _, _, epoch, miou = load_checkpoint(model, optimizer, args.save_dir, VAL_MODE)
+            best_val_result = init_best_result(epoch, miou)
+            _, _, epoch, miou = load_checkpoint(model, optimizer, args.save_dir, TRAIN_MODE)
+            best_train_result = init_best_result(epoch, miou)
+            model, optimizer, start_epoch, best_miou = load_checkpoint(model, optimizer, args.save_dir, LAST_MODE)
             start_epoch += 1
             print("Resuming from model: Start epoch = {0} "
                   "| Best mean IoU = {1:.4f}".format(start_epoch, best_miou))
         except AssertionError:
             best_miou = 0
             start_epoch = 0
+            best_val_result = init_best_result(start_epoch, best_miou)
+            best_train_result = init_best_result(start_epoch, best_miou)
             print("Checkpoint file not found. Starting from model: Start epoch = {0} "
                   "| Best mean IoU = {1:.4f}".format(start_epoch, best_miou))
     else:
         start_epoch = 0
         best_miou = 0
-    best_val_result = {
-        'ious': [],
-        'miou': best_miou,
-        'epoch': start_epoch
-    }
-    best_train_result = {
-        'ious': [],
-        'miou': best_miou,
-        'epoch': start_epoch
-    }
+        best_val_result = init_best_result(start_epoch, best_miou)
+        best_train_result = init_best_result(start_epoch, best_miou)
 
     for epoch in tqdm(range(start_epoch, args.epochs)):
         print("[Epoch: {0:d} | Training] Start epoch...".format(epoch))
@@ -69,13 +66,13 @@ def train(model, optimizer, criterion, metric, train_loader, val_loader, class_e
                 best_val_result['miou'] = miou
                 best_val_result['epoch'] = epoch
                 best_val_result['ious'] = ious
-                save_checkpoint(model, optimizer, epoch, miou, ious, 'val_best')
+                save_checkpoint(model, optimizer, epoch, miou, ious, VAL_MODE)
         if miou > best_train_result['miou']:
-            best_val_result['miou'] = miou
-            best_val_result['epoch'] = epoch
-            best_val_result['ious'] = ious
-            save_checkpoint(model, optimizer, epoch, miou, ious, 'train_best')
-        save_checkpoint(model, optimizer, epoch, miou, ious, 'last')
+            best_train_result['miou'] = miou
+            best_train_result['epoch'] = epoch
+            best_train_result['ious'] = ious
+            save_checkpoint(model, optimizer, epoch, miou, ious, TRAIN_MODE)
+        save_checkpoint(model, optimizer, epoch, miou, ious, LAST_MODE)
     return model
 
 
@@ -153,4 +150,13 @@ def dict_ious(class_encoding, ious):
     result = dict()
     for idx, (name, color) in enumerate(class_encoding.items()):
         result[name] = ious[idx]
+    return result
+
+
+def init_best_result(start_epoch, best_miou):
+    result = {
+        'ious': [],
+        'miou': best_miou,
+        'epoch': start_epoch
+    }
     return result
