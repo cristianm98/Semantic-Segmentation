@@ -10,12 +10,12 @@ from commons.checkpoint import load_checkpoint, VAL_MODE, TRAIN_MODE
 args = get_arguments()
 
 if __name__ == '__main__':
-    np.random.seed(123)
-    torch.manual_seed(123)
-    device = torch.device(args.device)
-    if device.type == 'cuda':
-        torch.cuda.manual_seed(123)
-    cudnn.benchmark = True
+    # np.random.seed(123)
+    # torch.manual_seed(123)
+    # device = torch.device(args.device)
+    # if device.type == 'cuda':
+    #     torch.cuda.manual_seed(123)
+    # cudnn.benchmark = True
     print(torch.__version__)
     if args.dataset.lower() == 'camvid':
         from datasets.camvid import CamVid as dataset
