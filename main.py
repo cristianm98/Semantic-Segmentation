@@ -9,6 +9,7 @@ from commons.checkpoint import load_checkpoint, VAL_MODE, TRAIN_MODE
 
 args = get_arguments()
 
+# TODO remove workers from dataset => possible fix for non-deterministic results
 if __name__ == '__main__':
     # np.random.seed(123)
     # torch.manual_seed(123)

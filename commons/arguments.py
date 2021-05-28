@@ -49,10 +49,12 @@ def get_arguments():
         help='The learning rate. Default: 5e-4')
     parser.add_argument(
         '--workers',
+        type=int,
         default=2,
         help='Number of workers. Default: 2')
     parser.add_argument(
         '--weight-decay',
+        type=float,
         default=0.01,
         help='Weigh decay. Default: 0.01'
     )
