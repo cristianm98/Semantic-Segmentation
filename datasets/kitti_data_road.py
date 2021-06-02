@@ -1,12 +1,13 @@
+import os
 from collections import OrderedDict
 
 import torch.utils.data as data
-import os
 from torch.utils.data.dataset import T_co
+
 import datasets.utils as utils
-from PIL import Image
 
 
+# TODO check again kitti dataset
 class _KittiTrain(data.Dataset):
     def __init__(self, root_dir, train_folder, train_folder_labeled, class_encoding, data_transform=None,
                  label_transform=None) -> None:
