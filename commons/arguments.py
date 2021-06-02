@@ -60,7 +60,7 @@ def get_arguments():
     )
     parser.add_argument(
         '--dataset',
-        choices=['camvid', 'kitti'],
+        choices=['camvid', 'kitti', 'infrared'],
         default='camvid',
         help='Dataset to use. Default: camvid')
     parser.add_argument(

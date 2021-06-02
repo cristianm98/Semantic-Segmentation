@@ -16,12 +16,16 @@ if __name__ == '__main__':
     #     torch.cuda.manual_seed(123)
     # cudnn.benchmark = True
     print(torch.__version__)
+    # TODO allow choosing split ratio
     if args.dataset.lower() == 'camvid':
         from datasets.camvid import CamVid as dataset
         data_loaders, class_encoding = dataset_utils.load_dataset(dataset)
     elif args.dataset.lower() == 'kitti':
         from datasets.kitti_data_road import Kitti as dataset
         data_loaders, class_encoding = dataset_utils.load_dataset(dataset, split_dataset=True)
+    elif args.dataset.lower() == 'infrared':
+        from datasets.infrared import InfraRed as dataset
+        data_loaders, class_encoding = dataset_utils.load_dataset(dataset)
     else:
         raise RuntimeError('\"{0}\" is not a supported dataset.'.format(args.dataset))
     # data_loaders, class_encoding = dataset_utils.load_dataset(dataset)
