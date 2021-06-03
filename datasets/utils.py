@@ -137,7 +137,7 @@ def get_target_mask(target, class_encoding):
 
 
 def get_data_transformed(data_path, transform):
-    result = Image.open(data_path)
+    result = Image.open(data_path).convert('RGB')
     if transform is not None:
         result = transform(result)
     return result
