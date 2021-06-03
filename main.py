@@ -22,7 +22,7 @@ if __name__ == '__main__':
         data_loaders, class_encoding = dataset_utils.load_dataset(dataset)
     elif args.dataset.lower() == 'kitti':
         from datasets.kitti_data_road import Kitti as dataset
-        data_loaders, class_encoding = dataset_utils.load_dataset(dataset, split_dataset=True)
+        data_loaders, class_encoding = dataset_utils.load_dataset(dataset)
     elif args.dataset.lower() == 'infrared':
         from datasets.infrared import InfraRed as dataset
         data_loaders, class_encoding = dataset_utils.load_dataset(dataset)

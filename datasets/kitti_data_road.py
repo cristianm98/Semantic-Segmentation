@@ -7,6 +7,13 @@ from torch.utils.data.dataset import T_co
 import datasets.utils as utils
 
 
+def split_dataset(full_dataset, split_ratio):
+    test_size = int(split_ratio * len(full_dataset))
+    val_size = len(full_dataset) - test_size
+    test_dataset, val_dataset = data.random_split(full_dataset, [test_size, val_size])
+    return val_dataset, test_dataset
+
+
 # TODO check again kitti dataset
 class _KittiTrain(data.Dataset):
     def __init__(self, root_dir, train_folder, train_folder_labeled, class_encoding, data_transform=None,
@@ -70,26 +77,31 @@ class Kitti(data.Dataset):
         self.mode = mode
         self.data_transform = data_transform
         self.label_transform = label_transform
-        self.kitti_train = _KittiTrain(root_dir=root_dir, train_folder=self.train_folder,
+        self.train_dataset = _KittiTrain(root_dir=root_dir, train_folder=self.train_folder,
+                                         class_encoding=self.class_encoding,
+                                         train_folder_labeled=self.train_folder_labeled, data_transform=data_transform,
+                                         label_transform=label_transform)
+        full_test_dataset = _KittiTest(root_dir=root_dir, test_folder=self.test_folder,
                                        class_encoding=self.class_encoding,
-                                       train_folder_labeled=self.train_folder_labeled, data_transform=data_transform,
-                                       label_transform=label_transform)
-        self.kitti_test = _KittiTest(root_dir=root_dir, test_folder=self.test_folder,
-                                     class_encoding=self.class_encoding,
-                                     data_transform=data_transform, label_transform=label_transform)
+                                       data_transform=data_transform, label_transform=label_transform)
+        self.val_dataset, self.test_dataset = split_dataset(full_test_dataset, 0.5)
 
     def __getitem__(self, index) -> T_co:
         if self.mode.lower() == 'train':
-            return self.kitti_train.__getitem__(index)
+            return self.train_dataset.__getitem__(index)
+        if self.mode.lower() == 'val':
+            return self.val_dataset.__getitem__(index)
         elif self.mode.lower() == 'test':
-            return self.kitti_test.__getitem__(index)
+            return self.test_dataset.__getitem__(index)
         else:
             raise RuntimeError("Unexpected dataset mode. Supported modes are: train and test.")
 
     def __len__(self):
         if self.mode.lower() == 'train':
-            return self.kitti_train.__len__()
+            return self.train_dataset.__len__()
+        if self.mode.lower() == 'val':
+            return self.val_dataset.__len__()
         elif self.mode.lower() == 'test':
-            return self.kitti_test.__len__()
+            return self.test_dataset.__len__()
         else:
             raise RuntimeError("Unexpected dataset mode. Supported modes are: train and test.")

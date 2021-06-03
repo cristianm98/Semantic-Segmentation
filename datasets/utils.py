@@ -1,32 +1,16 @@
 import os
 
-import numpy as np
 import torch.utils.data
 import torch.utils.data as data
 import torchvision.transforms as TF
 from PIL import Image
-from torch.utils.data.sampler import SubsetRandomSampler
 
 from commons.arguments import get_arguments
 
 args = get_arguments()
 
 
-def name_cond(name_filter: str):
-    if name_filter is None:
-        return lambda filename: True
-    else:
-        return lambda filename: name_filter in filename
-
-
-def ext_cond(ext_filter: str):
-    if ext_filter is None:
-        return lambda filename: True
-    else:
-        return lambda filename: filename.endswith(ext_filter)
-
-
-def get_files(dir_path, name_filter=None, extension_filter=None):
+def get_files(dir_path):
     if not os.path.isdir(dir_path):
         raise RuntimeError("\"{0}\" is not a directory.".format(dir_path))
     result = []
@@ -38,15 +22,13 @@ def get_files(dir_path, name_filter=None, extension_filter=None):
     return result
 
 
-def load_dataset(dataset, split_dataset=False):
-    if split_dataset:
-        train_set = get_dataset(dataset, 'train')
-        val_set = get_dataset(dataset, 'train')
-    else:
-        train_set = get_dataset(dataset, 'train')
-        val_set = get_dataset(dataset, 'val')
+def load_dataset(dataset):
+    train_set = get_dataset(dataset, 'train')
+    val_set = get_dataset(dataset, 'val')
     test_set = get_dataset(dataset, 'test')
-    train_loader, val_loader, test_loader = get_loaders(train_set, val_set, test_set, split_dataset)
+    train_loader = get_dataloader(train_set, shuffle=True)
+    val_loader = get_dataloader(val_set)
+    test_loader = get_dataloader(test_set)
     class_encoding = dataset.class_encoding
     return (train_loader, val_loader, test_loader), class_encoding
 
@@ -84,31 +66,6 @@ def get_target_transform(mode):
     # target_transform.append(TF.Normalize(mean=[0.485, 0.456, 0.406],
     #                                      std=[0.229, 0.224, 0.225]))
     return TF.Compose(target_transform)
-
-
-def get_samplers(train_set, shuffle=True, validation_split=.2, random_seed=42):
-    dataset_size = len(train_set)
-    indices = list(range(dataset_size))
-    split = int(np.floor(validation_split * dataset_size))
-    if shuffle:
-        np.random.seed(random_seed)
-        np.random.shuffle(indices)
-    train_indices, val_indices = indices[split:], indices[:split]
-    train_sampler = SubsetRandomSampler(train_indices)
-    val_sampler = SubsetRandomSampler(val_indices)
-    return train_sampler, val_sampler
-
-
-def get_loaders(train_set, val_set, test_set, split_dataset=False):
-    if split_dataset:
-        train_sampler, val_sampler = get_samplers(train_set, shuffle=True)
-        train_loader = get_dataloader(train_set, sampler=train_sampler)
-        val_loader = get_dataloader(val_set, sampler=val_sampler)
-    else:
-        train_loader = get_dataloader(train_set, shuffle=True)
-        val_loader = get_dataloader(val_set)
-    test_loader = get_dataloader(test_set)
-    return train_loader, val_loader, test_loader
 
 
 def get_dataloader(dataset, shuffle=False, sampler=None):
