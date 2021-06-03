@@ -55,7 +55,7 @@ class InfraRed(data.Dataset):
         ('Road', (128, 0, 0))
     ])
 
-    def __init__(self, root_dir, use_day: bool, mode='train', data_transform=None, label_transform=None) -> None:
+    def __init__(self, root_dir, use_day=True, mode='train', data_transform=None, label_transform=None) -> None:
         super().__init__()
         self.root_dir = root_dir
         self.use_day = use_day
