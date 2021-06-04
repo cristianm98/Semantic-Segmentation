@@ -89,7 +89,7 @@ class Kitti(data.Dataset):
     def __getitem__(self, index) -> T_co:
         if self.mode.lower() == 'train':
             return self.train_dataset.__getitem__(index)
-        if self.mode.lower() == 'val':
+        elif self.mode.lower() == 'val':
             return self.val_dataset.__getitem__(index)
         elif self.mode.lower() == 'test':
             return self.test_dataset.__getitem__(index)
@@ -99,7 +99,7 @@ class Kitti(data.Dataset):
     def __len__(self):
         if self.mode.lower() == 'train':
             return self.train_dataset.__len__()
-        if self.mode.lower() == 'val':
+        elif self.mode.lower() == 'val':
             return self.val_dataset.__len__()
         elif self.mode.lower() == 'test':
             return self.test_dataset.__len__()

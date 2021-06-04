@@ -68,14 +68,13 @@ def get_target_transform(mode):
     return TF.Compose(target_transform)
 
 
-def get_dataloader(dataset, shuffle=False, sampler=None):
+def get_dataloader(dataset, shuffle=False):
     return data.DataLoader(
         dataset=dataset,
         batch_size=args.batch_size,
         shuffle=shuffle,
         num_workers=args.workers,
-        drop_last=True,
-        sampler=sampler
+        drop_last=True
     )
 
 
