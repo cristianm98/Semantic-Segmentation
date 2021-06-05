@@ -21,7 +21,7 @@ class Tester:
             data = batch[0].to(self.device)
             target = batch[1].to(self.device)
             with torch.no_grad():
-                pred = self.model(data)
+                pred = self.model(data.unsqueeze(1))
                 loss = self.criterion(pred, target)
             epoch_loss += loss.item()
             self.metric.add(pred.detach(), target.detach())
