@@ -11,6 +11,7 @@ def split_dataset(full_dataset, split_ratio):
     test_size = int(split_ratio * len(full_dataset))
     val_size = len(full_dataset) - test_size
     test_dataset, val_dataset = data.random_split(full_dataset, [test_size, val_size])
+    print(len(val_dataset))
     return val_dataset, test_dataset
 
 
@@ -79,8 +80,8 @@ class Kitti(data.Dataset):
         self.label_transform = label_transform
         self.train_dataset = _KittiTrain(root_dir=root_dir, train_folder=self.train_folder,
                                          class_encoding=self.class_encoding,
-                                         train_folder_labeled=self.train_folder_labeled, data_transform=data_transform,
-                                         label_transform=label_transform)
+                                         train_folder_labeled=self.train_folder_labeled,
+                                         data_transform=data_transform, label_transform=label_transform)
         full_test_dataset = _KittiTest(root_dir=root_dir, test_folder=self.test_folder,
                                        class_encoding=self.class_encoding,
                                        data_transform=data_transform, label_transform=label_transform)

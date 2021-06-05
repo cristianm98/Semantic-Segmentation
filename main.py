@@ -19,16 +19,13 @@ if __name__ == '__main__':
     # TODO allow choosing split ratio
     if args.dataset.lower() == 'camvid':
         from datasets.camvid import CamVid as dataset
-        data_loaders, class_encoding = dataset_utils.load_dataset(dataset)
     elif args.dataset.lower() == 'kitti':
         from datasets.kitti_data_road import Kitti as dataset
-        data_loaders, class_encoding = dataset_utils.load_dataset(dataset)
     elif args.dataset.lower() == 'infrared':
         from datasets.infrared import InfraRed as dataset
-        data_loaders, class_encoding = dataset_utils.load_dataset(dataset)
     else:
         raise RuntimeError('\"{0}\" is not a supported dataset.'.format(args.dataset))
-    # data_loaders, class_encoding = dataset_utils.load_dataset(dataset)
+    data_loaders, class_encoding = dataset_utils.load_dataset(dataset)
     train_loader, val_loader, test_loader = data_loaders
     num_classes = len(class_encoding)
     model, criterion, optimizer, metric = commons_utils.get_parameters(num_classes)

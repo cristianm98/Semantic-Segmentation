@@ -45,25 +45,25 @@ def train(model, optimizer, criterion, metric, train_loader, val_loader, class_e
         start_epoch = 0
         best_miou = 0
         best_val_result = init_best_result(start_epoch, best_miou)
-
-    for epoch in tqdm(range(start_epoch, args.epochs)):
-        print("[Epoch: {0:d} | Training] Start epoch...".format(epoch))
-        loss, (ious, miou) = trainer.run_epoch()
-        print("[Epoch: {0:d} | Training] Finish epoch...\n"
-              "Results: Avg Loss:{1:.4f} | MIoU: {2:.4f}".format(epoch, loss, miou))
-        print(dict_ious(class_encoding, ious))
-        if (epoch + 1) % 10 == 0 or epoch + 1 == args.epochs:
-            print("[Epoch: {0:d} | Validation] Start epoch...".format(epoch))
-            loss, (ious, miou) = val.run_epoch()
-            print(dict_ious(class_encoding, ious))
-            print("[Epoch: {0:d} | Validation] Finish epoch...\n"
-                  "Results: Avg loss: {1:.4f} | MIoU: {2:.4f}".format(epoch, loss, miou))
-            if miou > best_val_result['miou']:
-                best_val_result['miou'] = miou
-                best_val_result['epoch'] = epoch
-                best_val_result['ious'] = ious
-                save_checkpoint(model, optimizer, epoch, miou, ious, VAL_MODE)
-        save_checkpoint(model, optimizer, epoch, miou, ious, LAST_MODE)
+    loss, (ious, miou) = val.run_epoch()
+    # for epoch in tqdm(range(start_epoch, args.epochs)):
+    #     print("[Epoch: {0:d} | Training] Start epoch...".format(epoch))
+    #     loss, (ious, miou) = trainer.run_epoch()
+    #     print("[Epoch: {0:d} | Training] Finish epoch...\n"
+    #           "Results: Avg Loss:{1:.4f} | MIoU: {2:.4f}".format(epoch, loss, miou))
+    #     print(dict_ious(class_encoding, ious))
+    #     if epoch == 0 or epoch + 1 == args.epochs:
+    #         print("[Epoch: {0:d} | Validation] Start epoch...".format(epoch))
+    #         loss, (ious, miou) = val.run_epoch()
+    #         print(dict_ious(class_encoding, ious))
+    #         print("[Epoch: {0:d} | Validation] Finish epoch...\n"
+    #               "Results: Avg loss: {1:.4f} | MIoU: {2:.4f}".format(epoch, loss, miou))
+    #         if miou > best_val_result['miou']:
+    #             best_val_result['miou'] = miou
+    #             best_val_result['epoch'] = epoch
+    #             best_val_result['ious'] = ious
+    #             save_checkpoint(model, optimizer, epoch, miou, ious, VAL_MODE)
+    #     save_checkpoint(model, optimizer, epoch, miou, ious, LAST_MODE)
     return model
 
 
