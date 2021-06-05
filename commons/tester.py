@@ -18,8 +18,6 @@ class Tester:
         epoch_loss = 0.0
         self.metric.reset()
         for idx, batch in enumerate(loop):
-            print(len(batch[0]))
-            print(len(batch[1]))
             data = batch[0].to(self.device)
             target = batch[1].to(self.device)
             with torch.no_grad():

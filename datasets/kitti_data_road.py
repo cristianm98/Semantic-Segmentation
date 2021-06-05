@@ -8,11 +8,11 @@ import datasets.utils as utils
 
 
 def split_dataset(full_dataset, split_ratio):
-    test_size = int(split_ratio * len(full_dataset))
-    val_size = len(full_dataset) - test_size
-    test_dataset, val_dataset = data.random_split(full_dataset, [test_size, val_size])
+    train_size = int(split_ratio * len(full_dataset))
+    val_size = len(full_dataset) - train_size
+    train_dataset, val_dataset = data.random_split(full_dataset, [train_size, val_size])
     print("Val dataset length: {0}".format(len(val_dataset)))
-    return val_dataset, test_dataset
+    return val_dataset, train_dataset
 
 
 # TODO check again kitti dataset
@@ -78,14 +78,14 @@ class Kitti(data.Dataset):
         self.mode = mode
         self.data_transform = data_transform
         self.label_transform = label_transform
-        self.train_dataset = _KittiTrain(root_dir=root_dir, train_folder=self.train_folder,
+        full_train_dataset = _KittiTrain(root_dir=root_dir, train_folder=self.train_folder,
                                          class_encoding=self.class_encoding,
                                          train_folder_labeled=self.train_folder_labeled,
                                          data_transform=data_transform, label_transform=label_transform)
-        full_test_dataset = _KittiTest(root_dir=root_dir, test_folder=self.test_folder,
+        self.test_dataset = _KittiTest(root_dir=root_dir, test_folder=self.test_folder,
                                        class_encoding=self.class_encoding,
                                        data_transform=data_transform, label_transform=label_transform)
-        self.val_dataset, self.test_dataset = split_dataset(full_test_dataset, 0.5)
+        self.val_dataset, self.train_dataset = split_dataset(full_train_dataset, 0.8)
 
     def __getitem__(self, index) -> T_co:
         if self.mode.lower() == 'train':
