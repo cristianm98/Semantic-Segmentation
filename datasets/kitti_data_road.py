@@ -11,7 +11,7 @@ def split_dataset(full_dataset, split_ratio):
     test_size = int(split_ratio * len(full_dataset))
     val_size = len(full_dataset) - test_size
     test_dataset, val_dataset = data.random_split(full_dataset, [test_size, val_size])
-    print(len(val_dataset))
+    print("Val dataset length: {0}".format(len(val_dataset)))
     return val_dataset, test_dataset
 
 
