@@ -29,6 +29,9 @@ def load_dataset(dataset):
     train_loader = get_dataloader(train_set, shuffle=True)
     val_loader = get_dataloader(val_set)
     test_loader = get_dataloader(test_set)
+    print("Train loader length: {0}".format(len(train_loader)))
+    print("Val loader length: {0}".format(len(val_loader)))
+    print("Test loader length: {0}".format(len(test_loader)))
     class_encoding = dataset.class_encoding
     return (train_loader, val_loader, test_loader), class_encoding
 
