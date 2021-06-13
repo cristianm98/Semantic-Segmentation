@@ -24,10 +24,10 @@ class SegNet(nn.Module):
 
     def forward(self, x):
         down1, indices_1, out_size_1 = self.down1(x)
-        down2, indices_2, out_size_2 = self.down1(down1)
-        down3, indices_3, out_size_3 = self.down1(down2)
-        down4, indices_4, out_size_4 = self.down1(down3)
-        down5, indices_5, out_size_5 = self.down1(down4)
+        down2, indices_2, out_size_2 = self.down2(down1)
+        down3, indices_3, out_size_3 = self.down3(down2)
+        down4, indices_4, out_size_4 = self.down4(down3)
+        down5, indices_5, out_size_5 = self.down5(down4)
         up5 = self.up5(down5, indices_5, out_size_5)
         up4 = self.up4(up5, indices_4, out_size_4)
         up3 = self.up3(up4, indices_3, out_size_3)
