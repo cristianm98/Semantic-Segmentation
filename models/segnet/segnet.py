@@ -28,12 +28,12 @@ class SegNet(nn.Module):
         down3, indices_3, out_size_3 = self.down3(down2)
         down4, indices_4, out_size_4 = self.down4(down3)
         down5, indices_5, out_size_5 = self.down5(down4)
-        up5 = self.up5(down5, indices_5, out_size_5)
-        up4 = self.up4(up5, indices_4, out_size_4)
-        up3 = self.up3(up4, indices_3, out_size_3)
-        up2 = self.up2(up3, indices_2, out_size_2)
-        up1 = self.up1(up2, indices_1, out_size_1)
-        return up1
+        up1 = self.up1(down5, indices_5, out_size_5)
+        up2 = self.up2(up1, indices_4, out_size_4)
+        up3 = self.up3(up2, indices_3, out_size_3)
+        up4 = self.up4(up3, indices_2, out_size_2)
+        up5 = self.up5(up4, indices_1, out_size_1)
+        return up5
 
     def init_vgg16(self, vgg16):
         layers = [self.down1, self.down2, self.down3, self.down4, self.down5]
