@@ -12,10 +12,10 @@ from tqdm.auto import tqdm
 import models.utils as model_utils
 import transforms as ext_transforms
 from commons.arguments import get_arguments
+from commons.checkpoint import save_checkpoint, load_checkpoint, VAL_MODE, LAST_MODE
 from commons.tester import Tester
 from commons.trainer import Trainer
 from metrics.iou import IoU
-from commons.checkpoint import save_checkpoint, load_checkpoint
 
 args = get_arguments()
 device = torch.device(args.device)
@@ -28,37 +28,42 @@ def train(model, optimizer, criterion, metric, train_loader, val_loader, class_e
                       device=device)
     val = Tester(model=model, data_loader=val_loader, criterion=criterion, metric=metric, device=device)
     if args.resume_training:
-        model, optimizer, start_epoch, best_miou = load_checkpoint(
-            model, optimizer, args.save_dir, load_best_result=False)
-        start_epoch += 1
-        print("Resuming from model: Start epoch = {0} "
-              "| Best mean IoU = {1:.4f}".format(start_epoch, best_miou))
+        try:
+            _, _, epoch, miou = load_checkpoint(model, optimizer, args.save_dir, VAL_MODE)
+            best_val_result = init_best_result(epoch, miou)
+            model, optimizer, start_epoch, best_miou = load_checkpoint(model, optimizer, args.save_dir, LAST_MODE)
+            start_epoch += 1
+            print("Resuming from model: Start epoch = {0} "
+                  "| Best mean IoU = {1:.4f}".format(start_epoch, best_miou))
+        except AssertionError:
+            best_miou = 0
+            start_epoch = 0
+            best_val_result = init_best_result(start_epoch, best_miou)
+            print("Checkpoint file not found. Starting from model: Start epoch = {0} "
+                  "| Best mean IoU = {1:.4f}".format(start_epoch, best_miou))
     else:
         start_epoch = 0
         best_miou = 0
-    best_result = {
-        'iou': [],
-        'miou': best_miou,
-        'epoch': start_epoch
-    }
+        best_val_result = init_best_result(start_epoch, best_miou)
+
     for epoch in tqdm(range(start_epoch, args.epochs)):
         print("[Epoch: {0:d} | Training] Start epoch...".format(epoch))
-        loss, (iou, miou) = trainer.run_epoch()
+        loss, (ious, miou) = trainer.run_epoch()
         print("[Epoch: {0:d} | Training] Finish epoch...\n"
               "Results: Avg Loss:{1:.4f} | MIoU: {2:.4f}".format(epoch, loss, miou))
-        print(dict_ious(class_encoding, iou))
+        print(dict_ious(class_encoding, ious))
         if (epoch + 1) % 10 == 0 or epoch + 1 == args.epochs:
             print("[Epoch: {0:d} | Validation] Start epoch...".format(epoch))
-            loss, (iou, miou) = val.run_epoch()
-            print(dict_ious(class_encoding, iou))
+            loss, (ious, miou) = val.run_epoch()
+            print(dict_ious(class_encoding, ious))
             print("[Epoch: {0:d} | Validation] Finish epoch...\n"
                   "Results: Avg loss: {1:.4f} | MIoU: {2:.4f}".format(epoch, loss, miou))
-            if miou > best_result['miou']:
-                best_result['miou'] = miou
-                best_result['epoch'] = epoch
-                best_result['iou'] = iou
-                save_checkpoint(model, optimizer, epoch, miou, save_best_result=True)
-            save_checkpoint(model, optimizer, epoch, miou, save_best_result=False)
+            if miou > best_val_result['miou']:
+                best_val_result['miou'] = miou
+                best_val_result['epoch'] = epoch
+                best_val_result['ious'] = ious
+                save_checkpoint(model, optimizer, epoch, miou, ious, VAL_MODE)
+        save_checkpoint(model, optimizer, epoch, miou, ious, LAST_MODE)
     return model
 
 
@@ -87,8 +92,10 @@ def predict(model, images, class_encoding):
         ext_transforms.LongTensorToRGBPIL(class_encoding),
         transforms.ToTensor()
     ])
-#     predictions = batch_transform(predictions.cpu(), label_to_rgb)
+    #     predictions = batch_transform(predictions.cpu(), label_to_rgb)
     imshow_batch(images.detach().cpu(), predictions.detach().cpu(), pred_transform)
+
+
 #     save_results(images.detach().cpu(), predictions.detach().cpu())
 
 
@@ -134,4 +141,13 @@ def dict_ious(class_encoding, ious):
     result = dict()
     for idx, (name, color) in enumerate(class_encoding.items()):
         result[name] = ious[idx]
+    return result
+
+
+def init_best_result(start_epoch, best_miou):
+    result = {
+        'ious': [],
+        'miou': best_miou,
+        'epoch': start_epoch
+    }
     return result

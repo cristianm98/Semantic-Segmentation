@@ -20,7 +20,7 @@ class DoubleConv(nn.Module):
 
 
 class Unet(nn.Module):
-    def __init__(self, in_channels=3, num_classes=1, features=None):
+    def __init__(self, in_channels=3, num_classes=1, features=None, use_dropout=True):
         super(Unet, self).__init__()
         if features is None:
             features = [64, 128, 256, 512]
@@ -29,6 +29,7 @@ class Unet(nn.Module):
         self.decoder = self.up(features)
         self.bottleneck = DoubleConv(features[-1], features[-1] * 2)
         self.conv1x1 = nn.Conv2d(features[0], num_classes, kernel_size=1)
+        self.use_dropout = use_dropout
 
     def down(self, in_channels, features):
         encoder = nn.ModuleList()
@@ -50,6 +51,8 @@ class Unet(nn.Module):
         for down in self.encoder:
             x = down(x)
             skip_connections.append(x)
+            if self.use_dropout:
+                x = nn.Dropout()(x)
             x = self.pool(x)
 
         x = self.bottleneck(x)
