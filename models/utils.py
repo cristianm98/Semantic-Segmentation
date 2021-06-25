@@ -1,4 +1,4 @@
-from commons.arguments import get_arguments
+from utils.arguments import get_arguments
 from models.pspnet import pspnet
 from models.segnet import segnet
 from models.unet import unet

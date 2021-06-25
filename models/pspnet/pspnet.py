@@ -69,5 +69,3 @@ class PspNet(nn.Module):
         x = self.ppm(x)
         x = self.final(x)
         return F.upsample(x, size[2:], mode='bilinear')
-
-# TODO: initialize weights for ppm and final layers?

@@ -29,9 +29,8 @@ def validate_target(target, num_classes):
 
 
 class ConfusionMatrix:
-    def __init__(self, num_classes, normalized=False):
+    def __init__(self, num_classes):
         self.conf_matrix = np.ndarray((num_classes, num_classes), dtype=np.int64)
-        self.normalized = normalized
         self.num_classes = num_classes
         self.reset()
 
@@ -55,8 +54,4 @@ class ConfusionMatrix:
         self.conf_matrix += conf_matrix
 
     def value(self):
-        if self.normalized:
-            conf_matrix = self.conf_matrix.astype(np.float32)
-            return conf_matrix / conf_matrix.sum(1).clip(min=1e-12)[:, None]
-        else:
-            return self.conf_matrix
+        return self.conf_matrix

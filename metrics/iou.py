@@ -14,8 +14,8 @@ def validate_data(pred, target):
     
 
 class IoU:
-    def __init__(self, num_classes, normalized=False, ignore_index=None):
-        self.conf_matrix = ConfusionMatrix(num_classes, normalized)
+    def __init__(self, num_classes, ignore_index=None):
+        self.conf_matrix = ConfusionMatrix(num_classes)
         if ignore_index is None:
             self.ignore_index = None
         elif isinstance(ignore_index, int):
@@ -39,9 +39,6 @@ class IoU:
 
     def value(self):
         conf_matrix = self.conf_matrix.value()
-        if self.ignore_index is not None:
-            conf_matrix[:, self.ignore_index] = 0
-            conf_matrix[self.ignore_index, :] = 0
         tp = np.diag(conf_matrix)
         fp = np.sum(conf_matrix, 0) - tp
         fn = np.sum(conf_matrix, 1) - tp

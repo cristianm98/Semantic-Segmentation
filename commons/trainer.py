@@ -12,13 +12,13 @@ class Trainer:
         self.device = device
 
     def run_epoch(self, use_tqdm=True):
-        loop = tqdm(self.data_loader) if use_tqdm else self.data_loader
+        train_data = tqdm(self.data_loader) if use_tqdm else self.data_loader
         if self.device.type == 'cuda':
             self.model.cuda()
         self.model.train()
         epoch_loss = 0.0
         self.metric.reset()
-        for idx, batch in enumerate(loop):
+        for idx, batch in enumerate(train_data):
             data = batch[0].to(self.device)
             target = batch[1].to(self.device)
             pred = self.model(data)

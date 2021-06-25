@@ -4,11 +4,11 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 
-from commons.arguments import get_arguments
+from utils.arguments import get_arguments
 
 args = get_arguments()
 device = torch.device(args.device)
-VAL_MODE = "val_best"
+VAL_MODE = "best"
 TRAIN_MODE = "train_best"
 LAST_MODE = "last"
 
@@ -50,8 +50,8 @@ def load_checkpoint(model: nn.Module, optimizer: optim.Optimizer, load_dir, mode
 
 def get_checkpoint_paths(mode):
     if mode == TRAIN_MODE or mode == VAL_MODE or mode == LAST_MODE:
-        args_path = os.path.join(args.save_dir, mode + '_' + args.name + '_' + args.dataset + '_args.txt')
-        model_path = os.path.join(args.save_dir, mode + '_' + args.name + '_' + args.dataset)
+        args_path = os.path.join(args.save_dir, mode + '_' + args.model + '_' + args.dataset + '_args.txt')
+        model_path = os.path.join(args.save_dir, mode + '_' + args.model + '_' + args.dataset)
     else:
         raise RuntimeError("Unexpected checkpoint mode. Supported modes are: val_best, train_best and last.")
     return args_path, model_path

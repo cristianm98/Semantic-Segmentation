@@ -2,19 +2,13 @@ import torch
 
 import commons.utils as commons_utils
 import datasets.utils as dataset_utils
-from commons.arguments import get_arguments
+from utils.arguments import get_arguments
 from commons.checkpoint import load_checkpoint, VAL_MODE
 
 args = get_arguments()
 
 # TODO remove workers from dataset => possible fix for non-deterministic results
 if __name__ == '__main__':
-    # np.random.seed(123)
-    # torch.manual_seed(123)
-    # device = torch.device(args.device)
-    # if device.type == 'cuda':
-    #     torch.cuda.manual_seed(123)
-    # cudnn.benchmark = True
     print(torch.__version__)
     # TODO allow choosing split ratio
     if args.dataset.lower() == 'camvid':
@@ -28,7 +22,6 @@ if __name__ == '__main__':
         data_loaders, class_encoding = dataset_utils.load_dataset(dataset)
     else:
         raise RuntimeError('\"{0}\" is not a supported dataset.'.format(args.dataset))
-    # data_loaders, class_encoding = dataset_utils.load_dataset(dataset)
     train_loader, val_loader, test_loader = data_loaders
     num_classes = len(class_encoding)
     model, criterion, optimizer, metric = commons_utils.get_parameters(num_classes)

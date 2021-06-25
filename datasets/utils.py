@@ -5,7 +5,7 @@ import torch.utils.data as data
 import torchvision.transforms as TF
 from PIL import Image
 
-from commons.arguments import get_arguments
+from utils.arguments import get_arguments
 
 args = get_arguments()
 
@@ -51,20 +51,15 @@ def get_image_transform(mode):
         image_transform.append(TF.RandomHorizontalFlip(0.3))
         image_transform.append(TF.RandomRotation(15))
     image_transform.append(TF.ToTensor())
-    # image_transform.append(TF.Normalize(mean=[0.485, 0.456, 0.406],
-    #                                     std=[0.229, 0.224, 0.225]))
     return TF.Compose(image_transform)
 
 
 def get_target_transform(mode):
-    # TODO POSSIBLE PROBLEM: PILToTensor transform
     target_transform = [TF.Resize((args.width, args.height), TF.InterpolationMode.NEAREST)]
     if args.data_aug and mode == 'train':
         target_transform.append(TF.RandomHorizontalFlip(0.5))
         target_transform.append(TF.RandomRotation(15))
     target_transform.append(TF.PILToTensor())
-    # target_transform.append(TF.Normalize(mean=[0.485, 0.456, 0.406],
-    #                                      std=[0.229, 0.224, 0.225]))
     return TF.Compose(target_transform)
 
 
