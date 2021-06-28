@@ -56,13 +56,13 @@ def train(model, optimizer, criterion, metric, train_loader, val_loader, class_e
         print("[Epoch: {0:d} | Training] Finish epoch...\n"
               "Results: Avg Loss:{1:.4f} | MIoU: {2:.4f}".format(epoch, loss, miou))
         print(dict_ious(class_encoding, ious))
+        ious = dict_ious(class_encoding, ious)
         if (epoch + 1) % 10 == 0 or epoch + 1 == args.epochs:
             print("[Epoch: {0:d} | Validation] Start epoch...".format(epoch))
             loss, (ious, miou) = val.run_epoch()
             print(dict_ious(class_encoding, ious))
             print("[Epoch: {0:d} | Validation] Finish epoch...\n"
                   "Results: Avg loss: {1:.4f} | MIoU: {2:.4f}".format(epoch, loss, miou))
-            ious = dict_ious(class_encoding, ious)
             best_ious = best_val_result['ious']
             if miou > best_val_result['miou'] and ious['Road'] > best_ious['Road']:
                 best_val_result['miou'] = miou
