@@ -33,6 +33,7 @@ def train(model, optimizer, criterion, metric, train_loader, val_loader, class_e
                 _, _, epoch, miou = load_checkpoint(model, optimizer, args.save_dir, VAL_MODE)
                 best_val_result = init_best_result(epoch, miou)
             except AssertionError:
+                best_val_result = init_best_result(0, 0)
                 print("Checkpoint for best model not found")
             model, optimizer, start_epoch, best_miou = load_checkpoint(model, optimizer, args.save_dir, LAST_MODE)
             start_epoch += 1
