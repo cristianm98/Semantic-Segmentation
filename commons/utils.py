@@ -62,7 +62,9 @@ def train(model, optimizer, criterion, metric, train_loader, val_loader, class_e
             print(dict_ious(class_encoding, ious))
             print("[Epoch: {0:d} | Validation] Finish epoch...\n"
                   "Results: Avg loss: {1:.4f} | MIoU: {2:.4f}".format(epoch, loss, miou))
-            if miou > best_val_result['miou']:
+            ious = dict_ious(class_encoding, ious)
+            best_ious = best_val_result['ious']
+            if miou > best_val_result['miou'] and ious['Road'] > best_ious['Road']:
                 best_val_result['miou'] = miou
                 best_val_result['epoch'] = epoch
                 best_val_result['ious'] = ious
@@ -150,7 +152,7 @@ def dict_ious(class_encoding, ious):
 
 def init_best_result(start_epoch, best_miou):
     result = {
-        'ious': [],
+        'ious': dict(),
         'miou': best_miou,
         'epoch': start_epoch
     }
