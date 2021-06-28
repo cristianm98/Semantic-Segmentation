@@ -64,11 +64,18 @@ def train(model, optimizer, criterion, metric, train_loader, val_loader, class_e
             print("[Epoch: {0:d} | Validation] Finish epoch...\n"
                   "Results: Avg loss: {1:.4f} | MIoU: {2:.4f}".format(epoch, loss, miou))
             best_ious = best_val_result['ious']
-            if miou > best_val_result['miou'] and ious['Road'] > best_ious['Road']:
-                best_val_result['miou'] = miou
-                best_val_result['epoch'] = epoch
-                best_val_result['ious'] = ious
-                save_checkpoint(model, optimizer, epoch, miou, ious, VAL_MODE)
+            if best_ious is None:
+                if miou > best_val_result['miou']:
+                    best_val_result['miou'] = miou
+                    best_val_result['epoch'] = epoch
+                    best_val_result['ious'] = ious
+                    save_checkpoint(model, optimizer, epoch, miou, ious, VAL_MODE)
+            else:
+                if miou > best_val_result['miou'] and ious['Road'] > best_ious['Road']:
+                    best_val_result['miou'] = miou
+                    best_val_result['epoch'] = epoch
+                    best_val_result['ious'] = ious
+                    save_checkpoint(model, optimizer, epoch, miou, ious, VAL_MODE)
         save_checkpoint(model, optimizer, epoch, miou, ious, LAST_MODE)
     return model
 
