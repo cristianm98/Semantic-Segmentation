@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 import torchvision.models as models
-import torch.nn.functional as F
+import torch.nn.functional as TF
 
 
 class PyramidPoolingModule(nn.Module):
@@ -21,7 +21,7 @@ class PyramidPoolingModule(nn.Module):
         size = x.size()
         out = [x]
         for f in self.features:
-            out.append(F.upsample(f(x), size[2:], mode='bilinear'))
+            out.append(TF.upsample(f(x), size[2:], mode='bilinear'))
         out = torch.cat(out, 1)
         return out
 
@@ -68,4 +68,4 @@ class PspNet(nn.Module):
         x = self.layer4(x)
         x = self.ppm(x)
         x = self.final(x)
-        return F.upsample(x, size[2:], mode='bilinear')
+        return TF.upsample(x, size[2:], mode='bilinear')

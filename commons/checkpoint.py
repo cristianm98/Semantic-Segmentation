@@ -40,9 +40,9 @@ def load_checkpoint(model: nn.Module, optimizer: optim.Optimizer, load_dir, mode
         '\"{0}\" file does not exist'.format(model_path)
     checkpoint = torch.load(model_path, map_location=device)
     model.load_state_dict(checkpoint['model'])
+    optimizer.load_state_dict(checkpoint['optimizer'])
     if device.type == 'cuda':
         model = model.cuda()
-    optimizer.load_state_dict(checkpoint['optimizer'])
     epoch = checkpoint['epoch']
     miou = checkpoint['miou']
     return model.to(device), optimizer, epoch, miou

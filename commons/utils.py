@@ -29,8 +29,11 @@ def train(model, optimizer, criterion, metric, train_loader, val_loader, class_e
     val = Tester(model=model, data_loader=val_loader, criterion=criterion, metric=metric, device=device)
     if args.resume_training:
         try:
-            _, _, epoch, miou = load_checkpoint(model, optimizer, args.save_dir, VAL_MODE)
-            best_val_result = init_best_result(epoch, miou)
+            try:
+                _, _, epoch, miou = load_checkpoint(model, optimizer, args.save_dir, VAL_MODE)
+                best_val_result = init_best_result(epoch, miou)
+            except AssertionError:
+                print("Checkpoint for best model not found")
             model, optimizer, start_epoch, best_miou = load_checkpoint(model, optimizer, args.save_dir, LAST_MODE)
             start_epoch += 1
             print("Resuming from model: Start epoch = {0} "

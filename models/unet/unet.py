@@ -24,9 +24,9 @@ class Unet(nn.Module):
         super(Unet, self).__init__()
         if features is None:
             features = [64, 128, 256, 512]
-        self.pool = nn.MaxPool2d(kernel_size=2, stride=2)
         self.encoder = self.down(in_channels, features)
         self.decoder = self.up(features)
+        self.pool = nn.MaxPool2d(kernel_size=2, stride=2)
         self.bottleneck = DoubleConv(features[-1], features[-1] * 2)
         self.conv1x1 = nn.Conv2d(features[0], num_classes, kernel_size=1)
         self.use_dropout = use_dropout
@@ -47,14 +47,12 @@ class Unet(nn.Module):
 
     def forward(self, x):
         skip_connections = []
-
         for down in self.encoder:
             x = down(x)
             skip_connections.append(x)
             if self.use_dropout:
                 x = nn.Dropout()(x)
             x = self.pool(x)
-
         x = self.bottleneck(x)
         skip_connections = list(reversed(skip_connections))
         for index in range(0, len(self.decoder), 2):
