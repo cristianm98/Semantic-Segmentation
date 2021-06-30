@@ -71,6 +71,7 @@ class Kitti(data.Dataset):
         ('Background', (255, 0, 0)),
     ])
 
+    # TODO allow choosing split ratio
     def __init__(self, root_dir, mode='train', data_transform=None, label_transform=None):
         super().__init__()
         self.root_dir = root_dir

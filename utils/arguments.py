@@ -115,5 +115,12 @@ def get_arguments():
         default=False,
         help='True if should use data augmentation for training. Default: False'
     )
+    parser.add_argument(
+        '--use-day',
+        nargs='?',
+        const=True,
+        default=False,
+        help='True if should use images obtained during the day. Default: True\nNote: Only applies for InfraRed dataset'
+    )
 
     return parser.parse_args()

@@ -49,7 +49,7 @@ class _InfraRedHelper(data.Dataset):
         return len(self.all_data)
 
 
-class InfraRed(data.Dataset):
+class _InfraRed(data.Dataset):
     class_encoding = OrderedDict([
         ('Background', (0, 0, 0)),
         ('Road', (128, 0, 0))
@@ -84,3 +84,15 @@ class InfraRed(data.Dataset):
             return len(self.test_dataset)
         else:
             raise RuntimeError("Unexpected dataset mode. Supported modes are: train, val and test.")
+
+
+class InfraRedDay(_InfraRed):
+    def __init__(self, root_dir, mode='train', data_transform=None, label_transform=None):
+        super(InfraRedDay, self).__init__(root_dir=root_dir, use_day=True, mode=mode, data_transform=data_transform,
+                                          label_transform=label_transform)
+
+
+class InfraRedNight(_InfraRed):
+    def __init__(self, root_dir, mode='train', data_transform=None, label_transform=None):
+        super(InfraRedNight, self).__init__(root_dir=root_dir, use_day=False, mode=mode, data_transform=data_transform,
+                                            label_transform=label_transform)
