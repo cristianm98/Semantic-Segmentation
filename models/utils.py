@@ -1,3 +1,5 @@
+import torchvision.models.segmentation
+
 from utils.arguments import get_arguments
 from models.pspnet import pspnet
 from models.segnet import segnet
@@ -14,4 +16,6 @@ def get_model(num_classes, pretrained):
         model = segnet.SegNet(num_classes=num_classes, pretrained=pretrained)
     elif args.model == 'unet':
         model = unet.Unet(num_classes=num_classes)
+    elif args.model == 'fcn':
+        model = torchvision.models.segmentation.fcn_resnet101(num_classes=num_classes, pretrained=pretrained)
     return model
