@@ -70,7 +70,7 @@ def get_arguments():
         help='Path to the selected dataset. Default: data/camvid')
     parser.add_argument(
         '--model',
-        choices=['pspnet', 'unet', 'segnet'],
+        choices=['pspnet', 'unet', 'segnet', 'fcn'],
         default='unet',
         help='The model to use. Default: unet')
     parser.add_argument(
