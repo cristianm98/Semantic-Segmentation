@@ -24,7 +24,6 @@ device = torch.device(args.device)
 def train(model, optimizer, criterion, metric, train_loader, val_loader, class_encoding):
     print("\nTraining...\n")
     print(model)
-    print(model.__class__.__name__)
     trainer = Trainer(model=model, data_loader=train_loader, optimizer=optimizer, criterion=criterion, metric=metric,
                       device=device)
     val = Tester(model=model, data_loader=val_loader, criterion=criterion, metric=metric, device=device)

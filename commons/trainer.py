@@ -21,7 +21,10 @@ class Trainer:
         for idx, batch in enumerate(train_data):
             data = batch[0].to(self.device)
             target = batch[1].to(self.device)
-            pred = self.model(data)
+            if self.model.__class__.__name__.lower() == 'fcn':
+                pred = self.model(data)['out']
+            else:
+                pred = self.model(data)
             loss = self.criterion(pred, target)
             self.optimizer.zero_grad()
             loss.backward()

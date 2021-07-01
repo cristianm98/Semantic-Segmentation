@@ -21,8 +21,11 @@ class Tester:
             data = batch[0].to(self.device)
             target = batch[1].to(self.device)
             with torch.no_grad():
-                pred = self.model(data)
-                loss = self.criterion(pred, target)
+                if self.model.__class__.__name__.lower() == 'fcn':
+                    pred = self.model(data)['out']
+                else:
+                    pred = self.model(data)
+            loss = self.criterion(pred, target)
             epoch_loss += loss.item()
             self.metric.add(pred.detach(), target.detach())
         return epoch_loss / len(self.data_loader), self.metric.value()
