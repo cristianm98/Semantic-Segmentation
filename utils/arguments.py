@@ -110,6 +110,7 @@ def get_arguments():
     )
     parser.add_argument(
         '--data-aug',
+        type=str2bool,
         nargs='?',
         const=True,
         default=False,
@@ -117,6 +118,7 @@ def get_arguments():
     )
     parser.add_argument(
         '--use-day',
+        type=str2bool,
         nargs='?',
         const=True,
         default=False,
