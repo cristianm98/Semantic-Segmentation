@@ -17,5 +17,5 @@ def get_model(num_classes, pretrained):
     elif args.model == 'unet':
         model = unet.Unet(num_classes=num_classes)
     elif args.model == 'fcn':
-        model = torchvision.models.segmentation.fcn_resnet101(num_classes=num_classes, pretrained=pretrained)
+        model = torchvision.models.segmentation.fcn_resnet101(num_classes=num_classes, pretrained=False)
     return model
