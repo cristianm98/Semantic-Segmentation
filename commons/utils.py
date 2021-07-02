@@ -92,7 +92,10 @@ def predict(model, images, class_encoding):
     images = images.to(device)
     model.eval()
     with torch.no_grad():
-        predictions = model(images)
+        if model.__class__.__name__.lower() == 'fcn':
+            predictions = model(images)['out']
+        else:
+            predictions = model(images)
     _, predictions = torch.max(predictions.data, 1)
     pred_transform = transforms.Compose([
         ext_transforms.LongTensorToRGBPIL(class_encoding),
