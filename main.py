@@ -18,7 +18,6 @@ if __name__ == '__main__':
         from datasets.kitti_data_road import Kitti as dataset
         data_loaders, class_encoding = dataset_utils.load_dataset(dataset)
     elif args.dataset.lower() == 'infrared':
-        print(args.use_day)
         if args.use_day:
             from datasets.infrared import InfraRedDay as dataset
         else:
