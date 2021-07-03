@@ -3,7 +3,7 @@ import torch
 import commons.utils as commons_utils
 import datasets.utils as dataset_utils
 from utils.arguments import get_arguments
-from commons.checkpoint import load_checkpoint, VAL_MODE
+from commons.checkpoint import load_checkpoint, BEST_MODE
 
 args = get_arguments()
 
@@ -29,9 +29,9 @@ if __name__ == '__main__':
     num_classes = len(class_encoding)
     model, criterion, optimizer, metric = commons_utils.get_parameters(num_classes)
     if args.load_model:
-        model, optimizer, epoch, miou = load_checkpoint(model, optimizer, args.save_dir, VAL_MODE)
+        model, optimizer, epoch, miou = load_checkpoint(model, optimizer, args.save_dir, BEST_MODE)
     else:
         model = commons_utils.train(model, optimizer, criterion, metric, train_loader, val_loader, class_encoding)
     print("[Test] Testing on best model...")
-    model, optimizer, _, _ = load_checkpoint(model, optimizer, args.save_dir, VAL_MODE)
+    model, optimizer, _, _ = load_checkpoint(model, optimizer, args.save_dir, BEST_MODE)
     commons_utils.test(model, criterion, metric, test_loader, class_encoding)

@@ -8,8 +8,7 @@ from utils.arguments import get_arguments
 
 args = get_arguments()
 device = torch.device(args.device)
-VAL_MODE = "best"
-TRAIN_MODE = "train_best"
+BEST_MODE = "best"
 LAST_MODE = "last"
 
 
@@ -49,9 +48,17 @@ def load_checkpoint(model: nn.Module, optimizer: optim.Optimizer, load_dir, mode
 
 
 def get_checkpoint_paths(mode):
-    if mode == TRAIN_MODE or mode == VAL_MODE or mode == LAST_MODE:
-        args_path = os.path.join(args.save_dir, mode + '_' + args.model + '_' + args.dataset + '_args.txt')
-        model_path = os.path.join(args.save_dir, mode + '_' + args.model + '_' + args.dataset)
+    if mode == LAST_MODE:
+        model_path = os.path.join(args.save_dir, 'last', args.dataset)
+    elif mode == BEST_MODE:
+        model_path = os.path.join(args.save_dir, 'best', args.dataset)
     else:
-        raise RuntimeError("Unexpected checkpoint mode. Supported modes are: val_best, train_best and last.")
+        raise RuntimeError("Unexpected checkpoint mode. Supported modes are: best and last.")
+    if args.dataset == 'infrared':
+        if args.use_day:
+            model_path = os.path.join(model_path, 'day')
+        else:
+            model_path = os.path.join(model_path, 'night')
+    model_path = os.path.join(model_path, args.model)
+    args_path = os.path.join(model_path, '_args.txt')
     return args_path, model_path
