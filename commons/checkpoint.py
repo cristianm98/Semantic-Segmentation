@@ -60,5 +60,5 @@ def get_checkpoint_paths(mode):
         else:
             model_path = os.path.join(model_path, 'night')
     model_path = os.path.join(model_path, args.model)
-    args_path = os.path.join(model_path, '_args.txt')
+    args_path = model_path + '_args.txt'
     return args_path, model_path
