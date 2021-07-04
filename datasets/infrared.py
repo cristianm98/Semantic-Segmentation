@@ -8,8 +8,12 @@ import datasets.utils as utils
 
 
 def get_paths(root_dir, mode):
-    data_dir = os.path.join(root_dir, mode, "data")
-    target_dir = os.path.join(root_dir, mode, "target")
+    if mode is not None:
+        data_dir = os.path.join(root_dir, mode, "data")
+        target_dir = os.path.join(root_dir, mode, "target")
+    else:
+        data_dir = os.path.join(root_dir, "data")
+        target_dir = os.path.join(root_dir, "target")
     return data_dir, target_dir
 
 
@@ -24,16 +28,19 @@ def split_dataset(full_dataset, split_ratio):
 
 
 class _InfraRedHelper(data.Dataset):
-    def __init__(self, root_dir, day: bool, class_encoding, data_transform=None, label_transform=None) -> None:
+    def __init__(self, root_dir, day, class_encoding, data_transform=None, label_transform=None) -> None:
         super().__init__()
         self.root_dir = root_dir
         self.day = day
         self.data_transform = data_transform
         self.label_transform = label_transform
-        if day:
-            data_dir, target_dir = get_paths(root_dir, "day")
+        if day is not None:
+            if day:
+                data_dir, target_dir = get_paths(root_dir, "day")
+            else:
+                data_dir, target_dir = get_paths(root_dir, "night")
         else:
-            data_dir, target_dir = get_paths(root_dir, "night")
+            data_dir, target_dir = get_paths(root_dir, None)
         self.all_data = utils.get_files(data_dir)
         self.all_targets = utils.get_files(target_dir)
         self.class_encoding = class_encoding
@@ -55,7 +62,7 @@ class _InfraRed(data.Dataset):
         ('Road', (128, 0, 0))
     ])
 
-    def __init__(self, root_dir, use_day=True, mode='train', data_transform=None, label_transform=None) -> None:
+    def __init__(self, root_dir, use_day, mode='train', data_transform=None, label_transform=None) -> None:
         super().__init__()
         self.root_dir = root_dir
         self.use_day = use_day
@@ -96,3 +103,9 @@ class InfraRedNight(_InfraRed):
     def __init__(self, root_dir, mode='train', data_transform=None, label_transform=None):
         super(InfraRedNight, self).__init__(root_dir=root_dir, use_day=False, mode=mode, data_transform=data_transform,
                                             label_transform=label_transform)
+
+
+class InfraRedAll(_InfraRed):
+    def __init__(self, root_dir, mode='train', data_transform=None, label_transform=None):
+        super(InfraRedAll, self).__init__(root_dir=root_dir, use_day=None, mode=mode, data_transform=data_transform,
+                                          label_transform=label_transform)

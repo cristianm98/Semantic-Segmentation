@@ -18,10 +18,12 @@ if __name__ == '__main__':
         from datasets.kitti_data_road import Kitti as dataset
         data_loaders, class_encoding = dataset_utils.load_dataset(dataset)
     elif args.dataset.lower() == 'infrared':
-        if args.use_day:
+        if args.infrared_mode == 'day':
             from datasets.infrared import InfraRedDay as dataset
-        else:
+        elif args.infrared_mode == 'night':
             from datasets.infrared import InfraRedNight as dataset
+        elif args.infrared_mode == 'all':
+            from datasets.infrared import InfraRedAll as dataset
         data_loaders, class_encoding = dataset_utils.load_dataset(dataset)
     else:
         raise RuntimeError('\"{0}\" is not a supported dataset.'.format(args.dataset))
