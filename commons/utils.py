@@ -117,10 +117,11 @@ def imshow_batch(images, predictions, pred_transform):
     predictions = batch_transform(predictions, pred_transform)
     images = torchvision.utils.make_grid(images).numpy()
     predictions = torchvision.utils.make_grid(predictions).numpy()
-    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(15, 7))
+    fig, (ax1, ax2, ax3) = plt.subplots(3, 1, figsize=(15, 7))
     ax1.imshow(np.transpose(images, (1, 2, 0)))
     ax2.imshow(np.transpose(predictions, (1, 2, 0)))
-    plt.show()
+    ax3.imshow(np.transpose(images, (1, 2, 0)))
+    ax3.imshow(np.transpose(predictions, (1, 2, 0)), alpha=0.5)
 
 
 def save_results(images, predictions):
