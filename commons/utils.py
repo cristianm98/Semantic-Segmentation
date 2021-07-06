@@ -12,7 +12,7 @@ from tqdm.auto import tqdm
 import models.utils as model_utils
 from utils import transforms as ext_transforms
 from utils.arguments import get_arguments
-from commons.checkpoint import save_checkpoint, load_checkpoint, VAL_MODE, LAST_MODE
+from commons.checkpoint import save_checkpoint, load_checkpoint, BEST_MODE, LAST_MODE
 from commons.tester import Tester
 from commons.trainer import Trainer
 from metrics.iou import IoU
@@ -30,7 +30,7 @@ def train(model, optimizer, criterion, metric, train_loader, val_loader, class_e
     if args.resume_training:
         try:
             try:
-                _, _, epoch, miou = load_checkpoint(model, optimizer, args.save_dir, VAL_MODE)
+                _, _, epoch, miou = load_checkpoint(model, optimizer, args.save_dir, BEST_MODE)
                 best_val_result = init_best_result(epoch, miou)
             except AssertionError:
                 best_val_result = init_best_result(0, 0)
@@ -68,7 +68,7 @@ def train(model, optimizer, criterion, metric, train_loader, val_loader, class_e
                 best_val_result['miou'] = miou
                 best_val_result['epoch'] = epoch
                 best_val_result['ious'] = ious
-                save_checkpoint(model, optimizer, epoch, miou, ious, VAL_MODE)
+                save_checkpoint(model, optimizer, epoch, miou, ious, BEST_MODE)
         save_checkpoint(model, optimizer, epoch, miou, ious, LAST_MODE)
     return model
 
@@ -117,10 +117,11 @@ def imshow_batch(images, predictions, pred_transform):
     predictions = batch_transform(predictions, pred_transform)
     images = torchvision.utils.make_grid(images).numpy()
     predictions = torchvision.utils.make_grid(predictions).numpy()
-    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(15, 7))
+    fig, (ax1, ax2, ax3) = plt.subplots(3, 1, figsize=(15, 7))
     ax1.imshow(np.transpose(images, (1, 2, 0)))
     ax2.imshow(np.transpose(predictions, (1, 2, 0)))
-    plt.show()
+    ax3.imshow(np.transpose(images, (1, 2, 0)))
+    ax3.imshow(np.transpose(predictions, (1, 2, 0)), alpha=0.5)
 
 
 def save_results(images, predictions):
