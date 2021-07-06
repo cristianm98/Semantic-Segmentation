@@ -121,7 +121,7 @@ def imshow_batch(images, predictions, pred_transform):
     ax1.imshow(np.transpose(images, (1, 2, 0)))
     ax2.imshow(np.transpose(predictions, (1, 2, 0)))
     ax3.imshow(np.transpose(images, (1, 2, 0)))
-    # ax3.imshow(np.transpose(predictions, (1, 2, 0)), alpha=0.5)
+    ax3.imshow(np.transpose(predictions, (1, 2, 0)), alpha=0.5)
 
 
 def save_results(images, predictions):
