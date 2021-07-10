@@ -129,16 +129,16 @@ def imshow_batch(images, predictions, pred_transform):
 def save_results(images, predictions):
     for idx, img in enumerate(images):
         pil_img = transforms.ToPILImage()(img)
-        img_path = os.path.join(args.results_dir, 'img_' + str(idx))
-        if not os.path.exists(img_path):
-            open(img_path).close()
-        pil_img.save(img_path + '.bmp')
+        img_path = os.path.join(args.results_dir, 'img_' + str(idx) + '.bmp')
+        # if not os.path.exists(img_path):
+        #     open(img_path).close()
+        pil_img.save(img_path)
     for idx, img in enumerate(predictions):
         pil_img = transforms.ToPILImage()(img)
-        img_path = os.path.join(args.results_dir, 'pred_' + str(idx))
-        if not os.path.exists(img_path):
-            open(img_path).close()
-        pil_img.save(img_path + '.bmp')
+        img_path = os.path.join(args.results_dir, 'pred_' + str(idx) + '.bmp')
+        # if not os.path.exists(img_path):
+            # open(img_path).close()
+        pil_img.save(img_path)
 
 
 def get_parameters(num_classes):
