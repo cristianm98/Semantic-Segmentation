@@ -76,22 +76,21 @@ def train(model, optimizer, criterion, metric, train_loader, val_loader, class_e
 def test(model, criterion, metric, test_loader, class_encoding):
     print("\nTesting...\n")
     tester = Tester(model=model, data_loader=test_loader, criterion=criterion, metric=metric, device=device)
-    if args.dataset != 'kitti' and args.dataset != 'crossir':
+    if args.dataset == 'kitti':
+        data = iter(test_loader).__next__()
+    elif args.dataset == 'crossir':
+        data, path = iter(test_loader).__next__()
+    else:
         loss, (iou, miou) = tester.run_epoch()
         print(dict_ious(class_encoding, iou))
         print("[Test] Avg loss: {0:.4f} | MIoU: {1:.4f}".format(loss, miou))
         data, _ = iter(test_loader).__next__()
-    else:
-        data = iter(test_loader).__next__()
     if device.type == 'cuda':
         model.cuda()
-    print(data)
     predict(model, data, class_encoding)
 
 
 def predict(model, images, class_encoding):
-    images = np.asarray(images)
-    images = torch.from_numpy(images.astype('long'))
     images = images.to(device)
     model.eval()
     with torch.no_grad():
@@ -104,7 +103,7 @@ def predict(model, images, class_encoding):
         ext_transforms.LongTensorToRGBPIL(class_encoding),
         transforms.ToTensor()
     ])
-    #     predictions = batch_transform(predictions.cpu(), label_to_rgb)
+    # predictions = batch_transform(predictions.cpu(), label_to_rgb)
     images = images.detach().cpu()
     predictions = predictions.detach().cpu()
     imshow_batch(images, predictions, pred_transform)
