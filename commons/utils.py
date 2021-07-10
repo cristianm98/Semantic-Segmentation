@@ -90,6 +90,8 @@ def test(model, criterion, metric, test_loader, class_encoding):
 
 
 def predict(model, images, class_encoding):
+    images = np.asarray(images)
+    images = torch.from_numpy(images.astype('long'))
     images = images.to(device)
     model.eval()
     with torch.no_grad():
