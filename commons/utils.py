@@ -132,6 +132,7 @@ def imshow_batch(images, predictions, pred_transform):
 def save_results(images, paths, predictions):
     for idx, img in enumerate(images):
         new_img_path = os.path.join(args.results_dir, 'img_' + str(idx) + '.bmp')
+        img = img.squeeze()
         img = img.numpy()
         pil_img = Image.fromarray(img)
         pil_img.save(new_img_path)
@@ -143,6 +144,7 @@ def save_results(images, paths, predictions):
         # torchvision.utils.save_image(img, new_img_path)
     for idx, img in enumerate(predictions):
         new_img_path = os.path.join(args.results_dir, 'pred_' + str(idx) + '.bmp')
+        img = img.squeeze()
         img = img.numpy()
         pil_img = Image.fromarray(img)
         pil_img.save(new_img_path)
