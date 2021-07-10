@@ -130,9 +130,12 @@ def imshow_batch(images, predictions, pred_transform):
 
 
 def save_results(images, paths, predictions):
+    print(images.shape)
     for idx, img in enumerate(images):
+        print(img.shape)
         new_img_path = os.path.join(args.results_dir, 'img_' + str(idx) + '.bmp')
         img = img.squeeze()
+        print(img.shape)
         img = img.numpy()
         pil_img = Image.fromarray(img)
         pil_img.save(new_img_path)
