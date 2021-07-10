@@ -25,6 +25,9 @@ if __name__ == '__main__':
         elif args.infrared_mode == 'all':
             from datasets.infrared import InfraRedAll as dataset
         data_loaders, class_encoding = dataset_utils.load_dataset(dataset)
+    elif args.dataset.lower() == 'crossir':
+        from datasets.crossir import CrossirTest as dataset
+        data_loaders, class_encoding = dataset_utils.load_dataset(dataset)
     else:
         raise RuntimeError('\"{0}\" is not a supported dataset.'.format(args.dataset))
     train_loader, val_loader, test_loader = data_loaders

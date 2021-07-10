@@ -54,7 +54,10 @@ def get_checkpoint_paths(mode):
         model_path = os.path.join(args.save_dir, 'best', args.dataset)
     else:
         raise RuntimeError("Unexpected checkpoint mode. Supported modes are: best and last.")
-    if args.dataset == 'infrared':
+    dataset_name = args.dataset
+    if args.dataset == 'crossir':
+        dataset_name = 'infrared'
+    if dataset_name == 'infrared':
         if args.infrared_mode == 'day':
             model_path = os.path.join(model_path, 'day')
         elif args.infrared_mode == 'night':

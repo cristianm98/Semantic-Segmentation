@@ -76,7 +76,7 @@ def train(model, optimizer, criterion, metric, train_loader, val_loader, class_e
 def test(model, criterion, metric, test_loader, class_encoding):
     print("\nTesting...\n")
     tester = Tester(model=model, data_loader=test_loader, criterion=criterion, metric=metric, device=device)
-    if args.dataset != 'kitti':
+    if args.dataset != 'kitti' and args.dataset != 'crossir':
         loss, (iou, miou) = tester.run_epoch()
         print(dict_ious(class_encoding, iou))
         print("[Test] Avg loss: {0:.4f} | MIoU: {1:.4f}".format(loss, miou))
@@ -102,10 +102,10 @@ def predict(model, images, class_encoding):
         transforms.ToTensor()
     ])
     #     predictions = batch_transform(predictions.cpu(), label_to_rgb)
-    imshow_batch(images.detach().cpu(), predictions.detach().cpu(), pred_transform)
-
-
-#     save_results(images.detach().cpu(), predictions.detach().cpu())
+    images = images.detach().cpu()
+    predictions = predictions.detach().cpu()
+    imshow_batch(images, predictions, pred_transform)
+    save_results(images, predictions)
 
 
 def batch_transform(batch, transform):
@@ -127,7 +127,7 @@ def imshow_batch(images, predictions, pred_transform):
 def save_results(images, predictions):
     for idx, img in enumerate(images):
         pil_img = transforms.ToPILImage()(img)
-        img_path = os.path.join(args.save_dir, 'Results', 'img_' + str(idx))
+        img_path = os.path.join(args.save_dir, 'results', 'img_' + str(idx))
         if not os.path.exists(img_path):
             open(img_path).close()
         pil_img.save(img_path, 'PNG')
