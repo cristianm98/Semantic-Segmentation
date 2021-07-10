@@ -131,7 +131,7 @@ def imshow_batch(images, predictions, pred_transform):
 def save_results(images, paths, predictions):
     for idx, img in enumerate(images):
         new_img_path = os.path.join(args.results_dir, 'img_' + str(idx) + '.bmp')
-        cv2.imwrite(str(new_img_path), img.numpy())
+        cv2.imwrite(str(new_img_path), img.transpose(1, 2, 0).numpy())
         # pil_img = transforms.ToPILImage()(img)
         # if not os.path.exists(new_img_path):
         #     open(new_img_path).close()
@@ -139,7 +139,7 @@ def save_results(images, paths, predictions):
         # torchvision.utils.save_image(img, new_img_path)
     for idx, img in enumerate(predictions):
         new_img_path = os.path.join(args.results_dir, 'pred_' + str(idx) + '.bmp')
-        cv2.imwrite(str(new_img_path), img.numpy())
+        cv2.imwrite(str(new_img_path), img.transpose(1, 2, 0).numpy())
         # pil_img = transforms.ToPILImage()(img)
         # if not os.path.exists(new_img_path):
         #     open(new_img_path).close()
