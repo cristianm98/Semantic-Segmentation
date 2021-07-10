@@ -110,7 +110,7 @@ def predict(model, images, class_encoding, paths=None):
     images = images.detach().cpu()
     predictions = predictions.detach().cpu()
     imshow_batch(images, predictions, pred_transform)
-    save_results(images, paths, predictions)
+    save_results(images, paths, predictions, class_encoding)
 
 
 def batch_transform(batch, transform):
@@ -129,31 +129,11 @@ def imshow_batch(images, predictions, pred_transform):
     ax3.imshow(np.transpose(predictions, (1, 2, 0)), alpha=0.5)
 
 
-def save_results(images, paths, predictions):
-    print(images.shape)
-    for idx, img in enumerate(images):
-        new_img_path = os.path.join(args.results_dir, 'img_' + str(idx) + '.bmp')
-        # img = img.mul_(255).add_(0.5).clamp_(0, 255).permute(1, 2, 0).type(torch.uint8).numpy()
-        # pil_img = Image.fromarray(img)
-        pil_img = transforms.ToPILImage()(img)
-        pil_img.save(str(idx) + '.bmp')
-        # cv2.imwrite(str(new_img_path), np.transpose(img, (1, 2, 0)))
-        # pil_img = transforms.ToPILImage()(img)
-        # if not os.path.exists(new_img_path):
-        #     open(new_img_path).close()
-        # pil_img.save(new_img_path, 'BMP')
-        # torchvision.utils.save_image(img, new_img_path)
+def save_results(images, paths, predictions, class_encoding):
     for idx, img in enumerate(predictions):
-        new_img_path = os.path.join(args.results_dir, 'pred_' + str(idx) + '.bmp')
-        pil_img = ext_transforms.LongTensorToRGBPIL()(img)
-        # img = img.mul_(255).add_(0.5).clamp_(0, 255).permute(1, 2, 0).type(torch.uint8).numpy()
-        # pil_img = Image.fromarray(img)
-        pil_img.save(str(idx) + '.bmp')
-        # cv2.imwrite(str(new_img_path), np.transpose(img, (1, 2, 0)))
-        # if not os.path.exists(new_img_path):
-        #     open(new_img_path).close()
-        # pil_img.save(new_img_path, 'BMP')
-        # torchvision.utils.save_image(img, new_img_path)
+        new_img_path = os.path.join(args.results_dir, os.path.basename(paths[idx]) + '.bmp')
+        pil_img = ext_transforms.LongTensorToRGBPIL(class_encoding)(img)
+        pil_img.save(new_img_path)
 
 
 def get_parameters(num_classes):
