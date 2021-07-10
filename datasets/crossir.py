@@ -15,9 +15,10 @@ class CrossirTest(data.Dataset):
         ('Road', (128, 0, 0))
     ])
 
-    def __init__(self, root_dir, data_transform=None, label_transform=None) -> None:
+    def __init__(self, root_dir, mode='test', data_transform=None, label_transform=None) -> None:
         super().__init__()
         self.root_dir = root_dir
+        self.mode = mode
         self.data_transform = data_transform
         self.label_transform = label_transform
         test_dir = os.path.join(root_dir, test_folder)
