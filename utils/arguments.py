@@ -122,5 +122,11 @@ def get_arguments():
         default='all',
         help="The infrared dataset mode. Default: all"
     )
+    parser.add_argument(
+        '--results-dir',
+        type=str,
+        default='results',
+        help="The directory where results are saved. Default: results"
+    )
 
     return parser.parse_args()
