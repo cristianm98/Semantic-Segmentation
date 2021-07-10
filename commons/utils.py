@@ -134,9 +134,7 @@ def save_results(images, paths, predictions):
     for idx, img in enumerate(images):
         new_img_path = os.path.join(args.results_dir, 'img_' + str(idx) + '.bmp')
         img = img.numpy()
-        img = img * 255
-        img = img.astype(np.uint8)
-        pil_img = Image.fromarray(img)
+        pil_img = Image.fromarray((img * 255).astype(np.uint8))
         pil_img.save(new_img_path)
         # cv2.imwrite(str(new_img_path), np.transpose(img, (1, 2, 0)))
         # pil_img = transforms.ToPILImage()(img)
@@ -147,9 +145,7 @@ def save_results(images, paths, predictions):
     for idx, img in enumerate(predictions):
         new_img_path = os.path.join(args.results_dir, 'pred_' + str(idx) + '.bmp')
         img = img.numpy()
-        img = img * 255
-        img = img.astype(np.uint8)
-        pil_img = Image.fromarray(img)
+        pil_img = Image.fromarray((img * 255).astype(np.uint8))
         pil_img.save(new_img_path)
         # cv2.imwrite(str(new_img_path), np.transpose(img, (1, 2, 0)))
         # if not os.path.exists(new_img_path):
