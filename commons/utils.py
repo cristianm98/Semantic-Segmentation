@@ -76,10 +76,11 @@ def train(model, optimizer, criterion, metric, train_loader, val_loader, class_e
 def test(model, criterion, metric, test_loader, class_encoding):
     print("\nTesting...\n")
     tester = Tester(model=model, data_loader=test_loader, criterion=criterion, metric=metric, device=device)
+    paths = None
     if args.dataset == 'kitti':
         data = iter(test_loader).__next__()
     elif args.dataset == 'crossir':
-        data, path = iter(test_loader).__next__()
+        data, paths = iter(test_loader).__next__()
     else:
         loss, (iou, miou) = tester.run_epoch()
         print(dict_ious(class_encoding, iou))
@@ -87,10 +88,10 @@ def test(model, criterion, metric, test_loader, class_encoding):
         data, _ = iter(test_loader).__next__()
     if device.type == 'cuda':
         model.cuda()
-    predict(model, data, class_encoding)
+    predict(model, data, class_encoding, paths=paths)
 
 
-def predict(model, images, class_encoding):
+def predict(model, images, class_encoding, paths=None):
     images = images.to(device)
     model.eval()
     with torch.no_grad():
@@ -107,7 +108,7 @@ def predict(model, images, class_encoding):
     images = images.detach().cpu()
     predictions = predictions.detach().cpu()
     imshow_batch(images, predictions, pred_transform)
-    save_results(images, predictions)
+    save_results(images, paths, predictions)
 
 
 def batch_transform(batch, transform):
@@ -126,21 +127,23 @@ def imshow_batch(images, predictions, pred_transform):
     ax3.imshow(np.transpose(predictions, (1, 2, 0)), alpha=0.5)
 
 
-def save_results(images, predictions):
+def save_results(images, paths, predictions):
     for idx, img in enumerate(images):
         # pil_img = transforms.ToPILImage()(img)
-        img_path = os.path.join(args.results_dir, 'img_' + str(idx) + '.bmp')
-        # if not os.path.exists(img_path):
-        #     open(img_path).close()
-        # pil_img.save(img_path)
-        torchvision.utils.save_image(img, img_path)
+        os.chdir(args.result_dir)
+        new_img_path = os.path.join(args.results_dir, 'img_' + str(idx) + '.bmp')
+        # if not os.path.exists(new_img_path):
+        #     open(new_img_path).close()
+        # pil_img.save(new_img_path)
+        torchvision.utils.save_image(img, new_img_path)
     for idx, img in enumerate(predictions):
         # pil_img = transforms.ToPILImage()(img)
-        img_path = os.path.join(args.results_dir, 'pred_' + str(idx) + '.bmp')
-        # if not os.path.exists(img_path):
-            # open(img_path).close()
-        torchvision.utils.save_image(img, img_path)
-        # pil_img.save(img_path)
+        os.chdir(args.result_dir)
+        new_img_path = os.path.join(args.results_dir, 'pred_' + str(idx) + '.bmp')
+        # if not os.path.exists(new_img_path):
+        #     open(new_img_path).close()
+        torchvision.utils.save_image(img, new_img_path)
+        # pil_img.save(new_img_path)
 
 
 def get_parameters(num_classes):
