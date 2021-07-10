@@ -85,6 +85,7 @@ def test(model, criterion, metric, test_loader, class_encoding):
         data = iter(test_loader).__next__()
     if device.type == 'cuda':
         model.cuda()
+    print(data)
     predict(model, data, class_encoding)
 
 
