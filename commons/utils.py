@@ -133,8 +133,8 @@ def save_results(images, paths, predictions):
     print(images.shape)
     for idx, img in enumerate(images):
         new_img_path = os.path.join(args.results_dir, 'img_' + str(idx) + '.bmp')
-        img = img.numpy()
-        pil_img = Image.fromarray((img * 255).astype(np.uint8))
+        img = img.mul_(255).add_(0.5).clamp_(0, 255).permute(1, 2, 0).type(torch.uint8).numpy()
+        pil_img = Image.fromarray(img)
         pil_img.save(new_img_path)
         # cv2.imwrite(str(new_img_path), np.transpose(img, (1, 2, 0)))
         # pil_img = transforms.ToPILImage()(img)
@@ -144,8 +144,8 @@ def save_results(images, paths, predictions):
         # torchvision.utils.save_image(img, new_img_path)
     for idx, img in enumerate(predictions):
         new_img_path = os.path.join(args.results_dir, 'pred_' + str(idx) + '.bmp')
-        img = img.numpy()
-        pil_img = Image.fromarray((img * 255).astype(np.uint8))
+        img = img.mul_(255).add_(0.5).clamp_(0, 255).permute(1, 2, 0).type(torch.uint8).numpy()
+        pil_img = Image.fromarray(img)
         pil_img.save(new_img_path)
         # cv2.imwrite(str(new_img_path), np.transpose(img, (1, 2, 0)))
         # if not os.path.exists(new_img_path):
