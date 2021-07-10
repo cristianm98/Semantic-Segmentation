@@ -48,15 +48,15 @@ def load_checkpoint(model: nn.Module, optimizer: optim.Optimizer, load_dir, mode
 
 
 def get_checkpoint_paths(mode):
-    if mode == LAST_MODE:
-        model_path = os.path.join(args.save_dir, 'last', args.dataset)
-    elif mode == BEST_MODE:
-        model_path = os.path.join(args.save_dir, 'best', args.dataset)
-    else:
-        raise RuntimeError("Unexpected checkpoint mode. Supported modes are: best and last.")
     dataset_name = args.dataset
     if args.dataset == 'crossir':
         dataset_name = 'infrared'
+    if mode == LAST_MODE:
+        model_path = os.path.join(args.save_dir, 'last', dataset_name)
+    elif mode == BEST_MODE:
+        model_path = os.path.join(args.save_dir, 'best', dataset_name)
+    else:
+        raise RuntimeError("Unexpected checkpoint mode. Supported modes are: best and last.")
     if dataset_name == 'infrared':
         if args.infrared_mode == 'day':
             model_path = os.path.join(model_path, 'day')
