@@ -7,6 +7,7 @@ import torch.nn as nn
 import torchvision
 import torchvision.transforms as transforms
 import cv2
+from PIL import Image
 from torch import optim
 from tqdm.auto import tqdm
 
@@ -131,8 +132,10 @@ def imshow_batch(images, predictions, pred_transform):
 def save_results(images, paths, predictions):
     for idx, img in enumerate(images):
         new_img_path = os.path.join(args.results_dir, 'img_' + str(idx) + '.bmp')
-        img = img.numpy()
-        cv2.imwrite(str(new_img_path), np.transpose(img, (1, 2, 0)))
+        pil_img = Image.fromarray(img)
+        pil_img.save(new_img_path)
+        # img = img.numpy()
+        # cv2.imwrite(str(new_img_path), np.transpose(img, (1, 2, 0)))
         # pil_img = transforms.ToPILImage()(img)
         # if not os.path.exists(new_img_path):
         #     open(new_img_path).close()
@@ -140,9 +143,10 @@ def save_results(images, paths, predictions):
         # torchvision.utils.save_image(img, new_img_path)
     for idx, img in enumerate(predictions):
         new_img_path = os.path.join(args.results_dir, 'pred_' + str(idx) + '.bmp')
-        img = img.numpy()
-        cv2.imwrite(str(new_img_path), np.transpose(img, (1, 2, 0)))
-        # pil_img = transforms.ToPILImage()(img)
+        pil_img = Image.fromarray(img)
+        pil_img.save(new_img_path)
+        # img = img.numpy()
+        # cv2.imwrite(str(new_img_path), np.transpose(img, (1, 2, 0)))
         # if not os.path.exists(new_img_path):
         #     open(new_img_path).close()
         # pil_img.save(new_img_path, 'BMP')
