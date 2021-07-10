@@ -78,19 +78,20 @@ def train(model, optimizer, criterion, metric, train_loader, val_loader, class_e
 def test(model, criterion, metric, test_loader, class_encoding):
     print("\nTesting...\n")
     tester = Tester(model=model, data_loader=test_loader, criterion=criterion, metric=metric, device=device)
-    paths = None
     if args.dataset == 'kitti':
         data = iter(test_loader).__next__()
+        predict(model, data, class_encoding)
     elif args.dataset == 'crossir':
-        data, paths = iter(test_loader).__next__()
+        for idx, (data, paths) in enumerate(test_loader):
+            predict(model, data, class_encoding, paths)
     else:
         loss, (iou, miou) = tester.run_epoch()
         print(dict_ious(class_encoding, iou))
         print("[Test] Avg loss: {0:.4f} | MIoU: {1:.4f}".format(loss, miou))
         data, _ = iter(test_loader).__next__()
+        predict(model, data, class_encoding)
     if device.type == 'cuda':
         model.cuda()
-    predict(model, data, class_encoding, paths=paths)
 
 
 def predict(model, images, class_encoding, paths=None):
@@ -110,7 +111,8 @@ def predict(model, images, class_encoding, paths=None):
     images = images.detach().cpu()
     predictions = predictions.detach().cpu()
     imshow_batch(images, predictions, pred_transform)
-    save_results(images, paths, predictions, class_encoding)
+    if paths is not None:
+        save_results(paths, predictions, class_encoding)
 
 
 def batch_transform(batch, transform):
@@ -129,9 +131,9 @@ def imshow_batch(images, predictions, pred_transform):
     ax3.imshow(np.transpose(predictions, (1, 2, 0)), alpha=0.5)
 
 
-def save_results(images, paths, predictions, class_encoding):
+def save_results(paths, predictions, class_encoding):
     for idx, img in enumerate(predictions):
-        new_img_path = os.path.join(args.results_dir, os.path.basename(paths[idx]) + '.bmp')
+        new_img_path = os.path.join(args.results_dir, os.path.basename(paths[idx]))
         pil_img = ext_transforms.LongTensorToRGBPIL(class_encoding)(img)
         pil_img.save(new_img_path)
 
