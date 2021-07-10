@@ -129,21 +129,19 @@ def imshow_batch(images, predictions, pred_transform):
 
 def save_results(images, paths, predictions):
     for idx, img in enumerate(images):
-        # pil_img = transforms.ToPILImage()(img)
-        os.chdir(args.result_dir)
+        pil_img = transforms.ToPILImage()(img)
         new_img_path = os.path.join(args.results_dir, 'img_' + str(idx) + '.bmp')
         # if not os.path.exists(new_img_path):
         #     open(new_img_path).close()
-        # pil_img.save(new_img_path)
-        torchvision.utils.save_image(img, new_img_path)
+        pil_img.save(new_img_path)
+        # torchvision.utils.save_image(img, new_img_path)
     for idx, img in enumerate(predictions):
-        # pil_img = transforms.ToPILImage()(img)
-        os.chdir(args.result_dir)
+        pil_img = transforms.ToPILImage()(img)
         new_img_path = os.path.join(args.results_dir, 'pred_' + str(idx) + '.bmp')
         # if not os.path.exists(new_img_path):
         #     open(new_img_path).close()
-        torchvision.utils.save_image(img, new_img_path)
-        # pil_img.save(new_img_path)
+        pil_img.save(new_img_path, 'BMP')
+        # torchvision.utils.save_image(img, new_img_path)
 
 
 def get_parameters(num_classes):
