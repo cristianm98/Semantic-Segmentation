@@ -133,7 +133,7 @@ def save_results(images, paths, predictions):
         new_img_path = os.path.join(args.results_dir, 'img_' + str(idx) + '.bmp')
         # if not os.path.exists(new_img_path):
         #     open(new_img_path).close()
-        pil_img.save(new_img_path)
+        pil_img.save(new_img_path, 'BMP')
         # torchvision.utils.save_image(img, new_img_path)
     for idx, img in enumerate(predictions):
         pil_img = transforms.ToPILImage()(img)
