@@ -145,7 +145,7 @@ def save_results(images, paths, predictions):
         # torchvision.utils.save_image(img, new_img_path)
     for idx, img in enumerate(predictions):
         new_img_path = os.path.join(args.results_dir, 'pred_' + str(idx) + '.bmp')
-        pil_img = transforms.ToPILImage()(img)
+        pil_img = ext_transforms.LongTensorToRGBPIL()(img)
         # img = img.mul_(255).add_(0.5).clamp_(0, 255).permute(1, 2, 0).type(torch.uint8).numpy()
         # pil_img = Image.fromarray(img)
         pil_img.save(str(idx) + '.bmp')
