@@ -44,21 +44,19 @@ def get_dataset(dataset, mode):
     )
 
 
-# TODO double check data augmentation, bc results are worse when applied
 def get_image_transform(mode):
-    image_transform = [TF.Resize((args.width, args.height))]
+    image_transform = []
     if args.data_aug and mode == 'train':
-        image_transform.append(TF.RandomHorizontalFlip(0.3))
-        image_transform.append(TF.RandomRotation(15))
+        image_transform = [TF.Resize((args.width, args.height)), TF.RandomHorizontalFlip(0.3), TF.RandomRotation(15)]
     image_transform.append(TF.ToTensor())
     return TF.Compose(image_transform)
 
 
 def get_target_transform(mode):
-    target_transform = [TF.Resize((args.width, args.height), TF.InterpolationMode.NEAREST)]
+    target_transform = []
     if args.data_aug and mode == 'train':
-        target_transform.append(TF.RandomHorizontalFlip(0.5))
-        target_transform.append(TF.RandomRotation(15))
+        target_transform = [TF.Resize((args.width, args.height), TF.InterpolationMode.NEAREST),
+                            TF.RandomHorizontalFlip(0.5), TF.RandomRotation(15)]
     target_transform.append(TF.PILToTensor())
     return TF.Compose(target_transform)
 
